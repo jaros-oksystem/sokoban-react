@@ -1,0 +1,4 @@
+1:"$Sreact.fragment"
+2:I[31713,["/sokoban-react/_next/static/chunks/336aeea667a62be3.js"],"default"]
+:HL["/sokoban-react/_next/static/chunks/9c8f4e9f6a20093f.css","style"]
+0:{"buildId":"N5eJhNDmFBNnbCQQ8sAUt","rsc":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/sokoban-react/_next/static/chunks/9c8f4e9f6a20093f.css","precedence":"next"}],["$","script","script-0",{"src":"/sokoban-react/_next/static/chunks/336aeea667a62be3.js","async":true}]],["$","html",null,{"lang":"en","children":["$","body",null,{"children":["$","$L2",null,{}]}]}]]}],"loading":null,"isPartial":false}
