@@ -3,6 +3,6 @@
 4:I[97367,["/sokoban-react/_next/static/chunks/42879de7b8087bc9.js"],"MetadataBoundary"]
 5:"$Sreact.suspense"
 7:I[27201,["/sokoban-react/_next/static/chunks/42879de7b8087bc9.js"],"IconMark"]
-0:{"buildId":"sX3lNzZbDI59z7OBGgI5T","rsc":["$","$1","h",{"children":[["$","meta",null,{"name":"robots","content":"noindex"}],["$","$L2",null,{"children":"$@3"}],["$","div",null,{"hidden":true,"children":["$","$L4",null,{"children":["$","$5",null,{"name":"Next.Metadata","children":"$@6"}]}]}],null]}],"loading":null,"isPartial":false}
+0:{"buildId":"R6uf2nr9nBCor5uAEWZVd","rsc":["$","$1","h",{"children":[["$","meta",null,{"name":"robots","content":"noindex"}],["$","$L2",null,{"children":"$@3"}],["$","div",null,{"hidden":true,"children":["$","$L4",null,{"children":["$","$5",null,{"name":"Next.Metadata","children":"$@6"}]}]}],null]}],"loading":null,"isPartial":false}
 3:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
-6:[["$","title","0",{"children":"Sokoban solver"}],["$","link","1",{"rel":"icon","href":"/sokoban-react/favicon.ico?favicon.0b3bf435.ico","sizes":"256x256","type":"image/x-icon"}],["$","$L7","2",{}]]
+6:[["$","link","0",{"rel":"icon","href":"/sokoban-react/favicon.ico?favicon.37f0b089.ico","sizes":"48x48","type":"image/x-icon"}],["$","$L7","1",{}]]
