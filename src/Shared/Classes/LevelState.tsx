@@ -1,14 +1,14 @@
-import {GridCoordinates} from "@/app/Shared/Classes/GridCoordinates";
-import {Level} from "@/app/Shared/Classes/Level";
-import {DirectionEnum} from "@/app/Shared/Enum/DirectionEnum";
+import {GridCoordinates} from "@/src/Shared/Classes/GridCoordinates";
+import {Level} from "@/src/Shared/Classes/Level";
+import {DirectionEnum} from "@/src/Shared/Enum/DirectionEnum";
 
 export class LevelState {
-  player: Readonly<GridCoordinates>;
-  boxes: Readonly<GridCoordinates>[];
+  player: GridCoordinates;
+  boxes: GridCoordinates[];
   turn: number;
   won: boolean;
 
-  constructor(player: Readonly<GridCoordinates>, boxes: Readonly<GridCoordinates>[], turn: number, won: boolean) {
+  constructor(player: GridCoordinates, boxes: GridCoordinates[], turn: number, won: boolean) {
     this.player = player;
     this.boxes = boxes;
     this.turn = turn;
@@ -31,7 +31,7 @@ export class LevelState {
     }
     // Check if player tries to move into a wall or out of bounds
     const newPlayerCrds = this.player.getShifted(direction);
-    if (!level.canObjectBeAt(newPlayerCrds)) {
+    if (!level.isValidPlaceForObjectAtCoordinates(newPlayerCrds)) {
       return null;
     }
     // Prepare new level instance
@@ -40,10 +40,10 @@ export class LevelState {
     const movedBoxIdx = this.getBoxIdxAt(newPlayerCrds);
     if (movedBoxIdx != null) {
       const newBoxCrds = newPlayerCrds.getShifted(direction);
-      if (level.canObjectBeAt(newBoxCrds) && this.getBoxIdxAt(newBoxCrds) == null) {
+      if (level.isValidPlaceForObjectAtCoordinates(newBoxCrds) && this.getBoxIdxAt(newBoxCrds) == null) {
         // There is nothing preventing the box from being moved
         newLevelState.boxes[movedBoxIdx] = newBoxCrds;
-        newLevelState.won = newLevelState.boxes.every((box) => level.isGoalAt(box));
+        newLevelState.won = newLevelState.boxes.every((boxCrds) => level.isGoalAt(boxCrds));
       } else {
         // Player tries to move a box which cannot be moved, do not move the player
         return null;

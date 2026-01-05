@@ -1,10 +1,10 @@
-import {DirectionEnum} from "@/app/Shared/Enum/DirectionEnum";
+import {DirectionEnum} from "@/src/Shared/Enum/DirectionEnum";
 
 export class GridCoordinates {
   x: number;
   y: number;
 
-  constructor(x: number, y:number) {
+  constructor(x: number, y: number) {
     this.x = x;
     this.y = y;
   }
