@@ -1,9 +1,8 @@
 export enum LevelTileEnum {
-  // Used in level specification
   EMPTY,
   WALL,
   GOAL,
-  // Used in the level editor and board rendering
+  // The following values are used only in the level editor and board rendering
   BOX,
   PLAYER,
   BOX_ON_GOAL,
@@ -21,7 +20,8 @@ export function getCharForTileType(tileType: LevelTileEnum): string {
     case LevelTileEnum.PLAYER_ON_GOAL: return "\u1437";
   }
 }
-export function getNameTileType(tileType: LevelTileEnum): string {
+
+export function getTileTypeName(tileType: LevelTileEnum): string {
   switch (tileType) {
     case LevelTileEnum.EMPTY: return "Empty";
     case LevelTileEnum.WALL: return "Wall";

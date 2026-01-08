@@ -1,10 +1,12 @@
 import {LevelTileEnum} from "@/src/Shared/Enum/LevelTileEnum";
-import {GridCoordinates} from "@/src/Shared/Classes/GridCoordinates";
-import {LevelState} from "@/src/Shared/Classes/LevelState";
+import GridCoordinates from "@/src/Shared/Classes/GridCoordinates";
+import LevelState from "@/src/Shared/Classes/LevelState";
+import {getMatrixOfSize, getTransposedMatrix} from "@/src/Shared/Util/MatrixUtils";
+import {DirectionEnum, getOppositeDirection, getRotatedDirection} from "@/src/Shared/Enum/DirectionEnum";
 
-export const noPlayerCoordinates = new GridCoordinates(-1,-1);
+export const NO_PLAYER_COORDINATES = new GridCoordinates(-1,-1);
 
-export class Level {
+export default class Level {
   lenX: number;
   lenY: number;
   levelTiles: LevelTileEnum[][];
@@ -19,6 +21,8 @@ export class Level {
     this.initialPlayer = initialPlayer;
     this.initialBoxes = initialBoxes;
   }
+
+  // _______________________ Function section: get information about the level _______________________
 
   getInitialLevelState() {
     return new LevelState(this.initialPlayer, this.initialBoxes.slice(), 0, false);
@@ -55,7 +59,7 @@ export class Level {
     return idx == -1 ? null : idx;
   }
 
-  isValidPlaceForObjectAtCoordinates(coordinates: GridCoordinates){
+  isValidPlaceForObjectAt(coordinates: GridCoordinates){
     return coordinates.x >= 0
         && coordinates.y >= 0
         && coordinates.x < this.lenX
@@ -63,9 +67,35 @@ export class Level {
         && !this.isWallAt(coordinates)
   }
 
-  coordinatesToTileId(coordinates: GridCoordinates): number {
-    return this.lenY*coordinates.x + coordinates.y;
+  isPlayerInNoPlayerCoordinates() {
+    return NO_PLAYER_COORDINATES.equals(this.initialPlayer);
   }
+
+  isCornerAt(coordinates: GridCoordinates): boolean {
+    if (!this.isValidPlaceForObjectAt(coordinates)) {
+      return false;
+    }
+    const isBlockedUp = !this.isValidPlaceForObjectAt(coordinates.getShifted(DirectionEnum.UP));
+    const isBlockedLeft = !this.isValidPlaceForObjectAt(coordinates.getShifted(DirectionEnum.LEFT));
+    const isBlockedDown = !this.isValidPlaceForObjectAt(coordinates.getShifted(DirectionEnum.DOWN));
+    const isBlockedRight = !this.isValidPlaceForObjectAt(coordinates.getShifted(DirectionEnum.RIGHT));
+    return isBlockedUp && isBlockedLeft ||
+        isBlockedLeft && isBlockedDown ||
+        isBlockedDown && isBlockedRight ||
+        isBlockedRight && isBlockedUp;
+  }
+
+  canBoxBePushedInDirectionAt(coordinates: GridCoordinates, direction: DirectionEnum): boolean {
+    const requiredPlayerPosition = coordinates.getShifted(getOppositeDirection(direction));
+    const movedBoxCoords = coordinates.getShifted(direction);
+    return this.isValidPlaceForObjectAt(movedBoxCoords) && this.isValidPlaceForObjectAt(requiredPlayerPosition);
+  }
+
+  getLevelCopy() {
+    return new Level(this.lenX, this.lenY, this.levelTiles, this.initialBoxes, this.initialPlayer)
+  }
+
+  // _______________________ Function section: changing the level _______________________
 
   changeTileTo(coordinates: GridCoordinates, tile: LevelTileEnum){
     this.levelTiles[coordinates.x][coordinates.y] = tile;
@@ -84,7 +114,7 @@ export class Level {
   }
 
   changeLevelBasedOnBrushClick(coordinates: GridCoordinates, tileEnum: LevelTileEnum){
-    const isCompletelyEmpty = this.isInitiallyEmptyAt(coordinates);
+    const isInitiallyEmptyAt = this.isInitiallyEmptyAt(coordinates);
     const isEmptyTile = this.isEmptyTileAt(coordinates);
     const isWall = this.isWallAt(coordinates);
     const isGoal = this.isGoalAt(coordinates);
@@ -93,7 +123,7 @@ export class Level {
 
     switch (tileEnum) {
       case LevelTileEnum.EMPTY:
-        if (isCompletelyEmpty) {
+        if (isInitiallyEmptyAt) {
           return;
         }
         if (isWall || isGoal) {
@@ -103,7 +133,7 @@ export class Level {
           this.removeInitialBoxAt(coordinates);
         }
         if (isPlayer) {
-          this.moveInitialPlayerTo(noPlayerCoordinates);
+          this.moveInitialPlayerTo(NO_PLAYER_COORDINATES);
         }
         break;
       case LevelTileEnum.WALL:
@@ -117,7 +147,7 @@ export class Level {
           this.removeInitialBoxAt(coordinates);
         }
         if (isPlayer) {
-          this.moveInitialPlayerTo(noPlayerCoordinates);
+          this.moveInitialPlayerTo(NO_PLAYER_COORDINATES);
         }
         break;
       case LevelTileEnum.GOAL:
@@ -136,7 +166,7 @@ export class Level {
           this.changeTileTo(coordinates, LevelTileEnum.EMPTY);
         }
         if (isPlayer) {
-          this.moveInitialPlayerTo(noPlayerCoordinates);
+          this.moveInitialPlayerTo(NO_PLAYER_COORDINATES);
         }
         this.addInitialBoxAt(coordinates);
         break;
@@ -153,8 +183,110 @@ export class Level {
         this.moveInitialPlayerTo(coordinates);
         break;
       default:
-        throw new Error("Tile chang not supported for enum: " + tileEnum);
+        throw new Error("Tile change not supported for enum: " + tileEnum);
     }
+  }
+
+  changeLevelDimensions(newLenX: number, newLenY: number){
+    const newLevelTiles = getMatrixOfSize(newLenX, newLenY, LevelTileEnum.EMPTY);
+    for (let x = 0; x < Math.min(newLenX, this.lenX); x++) {
+      for (let y = 0; y < Math.min(newLenY, this.lenY); y++) {
+        newLevelTiles[x][y] = this.levelTiles[x][y];
+      }
+    }
+    this.levelTiles = newLevelTiles;
+    this.initialBoxes = this.initialBoxes.filter(box => box.x < newLenX && box.y < newLenY);
+    if (this.initialPlayer.x >= newLenX || this.initialPlayer.y >= newLenY) {
+      this.moveInitialPlayerTo(NO_PLAYER_COORDINATES);
+    }
+    this.lenX = newLenX;
+    this.lenY = newLenY;
+  }
+
+  getLevelTransposed(): Level {
+    return new Level(
+        this.lenY,
+        this.lenX,
+        getTransposedMatrix(this.levelTiles),
+        this.initialBoxes.map(box => new GridCoordinates(box.y, box.x)),
+        new GridCoordinates(this.initialPlayer.y, this.initialPlayer.x)
+    );
+  }
+
+  // _______________________ Function section: creating masks _______________________
+
+  getPlayableAreaMask(): boolean[][] {
+    if (this.isPlayerInNoPlayerCoordinates()) {
+      throw new Error("Cannot create playable area mask without a player");
+    }
+    const visited: boolean[][] = getMatrixOfSize(this.lenX, this.lenY, false);
+    const queue: GridCoordinates[] = [this.initialPlayer];
+    visited[this.initialPlayer.x][this.initialPlayer.y] = true;
+    while (queue.length > 0) {
+      const state = queue.pop();
+      if (state === undefined) {
+        throw new Error("Popped an undefined state");
+      }
+      for (const direction of [DirectionEnum.UP, DirectionEnum.LEFT, DirectionEnum.DOWN, DirectionEnum.RIGHT]) {
+        const nextState = state.getShifted(direction);
+        if (this.isValidPlaceForObjectAt(nextState) && !visited[nextState.x][nextState.y]) {
+          visited[nextState.x][nextState.y] = true;
+          queue.push(nextState);
+        }
+      }
+    }
+    return visited;
+  }
+
+  getAllCornersInMask(mask: boolean[][]): GridCoordinates[] {
+    const corners: GridCoordinates[] = [];
+    for (let x = 0; x < this.lenX; x++) {
+      for (let y = 0; y < this.lenY; y++) {
+        if (!mask[x][y]) {
+          continue;
+        }
+        const tile = new GridCoordinates(x,y);
+        if (this.isCornerAt(tile)) {
+          corners.push(tile);
+        }
+      }
+    }
+    return corners;
+  }
+
+  getViableBoxMask(): boolean[][] {
+    const viableBoxMask: boolean[][] = this.getPlayableAreaMask();
+    const corners: GridCoordinates[] = this.getAllCornersInMask(viableBoxMask);
+    for (const corner of corners) {
+      viableBoxMask[corner.x][corner.y] = false;
+      for (const direction of [DirectionEnum.RIGHT, DirectionEnum.DOWN]) {
+        if (this.isValidPlaceForObjectAt(corner.getShifted(direction))) {
+          const exploredTiles: GridCoordinates[] = [];
+          let curPosition = corner;
+          while (true) {
+            // If the line contains a goal, it is viable
+            if (this.isGoalAt(curPosition)) {
+              break;
+            }
+            // No goal was found and the search ended in a corner, the line is unviable
+            if (exploredTiles.length > 0 && this.isCornerAt(curPosition)) {
+              for (const exploredTile of exploredTiles) {
+                viableBoxMask[exploredTile.x][exploredTile.y] = false;
+              }
+              break;
+            }
+            // See if the box could move at the next position in a different direction
+            const nextPosition = curPosition.getShifted(direction);
+            if (this.canBoxBePushedInDirectionAt(nextPosition, getRotatedDirection(direction))) {
+              break;
+            }
+            exploredTiles.push(curPosition);
+            curPosition = nextPosition;
+          }
+        }
+      }
+    }
+    return viableBoxMask;
   }
 
 }

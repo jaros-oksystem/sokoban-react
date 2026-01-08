@@ -1,6 +1,6 @@
 import {DirectionEnum} from "@/src/Shared/Enum/DirectionEnum";
 
-export class GridCoordinates {
+export default class GridCoordinates {
   x: number;
   y: number;
 

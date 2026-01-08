@@ -1,0 +1,1 @@
+export const DEFAULT_LEVEL_CODE = "j-b-21_1wc7wA$$BYEZ0U40M40we1Me1M_)8f$_gkwo)3";

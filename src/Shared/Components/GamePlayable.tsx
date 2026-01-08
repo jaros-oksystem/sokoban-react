@@ -1,24 +1,19 @@
 import {useEffect, useState} from "react";
 import {getDirectionEnumFromKeyboardEventKey} from "@/src/Shared/Enum/DirectionEnum";
-import {LevelTileEnum} from "@/src/Shared/Enum/LevelTileEnum";
-import {Level} from "@/src/Shared/Classes/Level";
-import {Board} from "@/src/Shared/Components/Board";
-import {LevelState} from "@/src/Shared/Classes/LevelState";
-import {GridCoordinates} from "@/src/Shared/Classes/GridCoordinates";
+import Level from "@/src/Shared/Classes/Level";
+import Board from "@/src/Shared/Components/Board";
+import LevelState from "@/src/Shared/Classes/LevelState";
+import BlueButton from "@/src/Shared/Components/BasicComponents/BlueButton";
 
-export function GamePlayable() {
-  const demoLenX = 5, demoLenY = 5;
-  const demoLevelTiles = [...Array(demoLenX)].map(() => new Array(demoLenY).fill(LevelTileEnum.EMPTY));
-  demoLevelTiles[3][2] = LevelTileEnum.WALL;
-  demoLevelTiles[3][0] = LevelTileEnum.GOAL;
-  demoLevelTiles[0][4] = LevelTileEnum.GOAL;
-  const demoLevel = new Level(demoLenX, demoLenY, demoLevelTiles, [new GridCoordinates(1,1), new GridCoordinates(3,3)], new GridCoordinates(2,2));
+interface Props {
+  level: Level
+}
 
-  const [level, setLevel] = useState<Level>(demoLevel);
+export default function GamePlayable({level}: Readonly<Props>) {
   const [levelState, setLevelState] = useState<LevelState>(level.getInitialLevelState());
 
   useEffect(() => {
-    function handlekeydownEvent(e: KeyboardEvent) {
+    function handleKeyDownEvent(e: KeyboardEvent) {
       const direction = getDirectionEnumFromKeyboardEventKey(e.key);
       if (direction != null) {
         const newLevelState = levelState.createNewLevelStateForPlayerMove(level, direction);
@@ -27,23 +22,24 @@ export function GamePlayable() {
         }
       }
     }
-    document.addEventListener('keyup', handlekeydownEvent)
+    document.addEventListener('keydown', handleKeyDownEvent)
     return () => {
-      document.removeEventListener('keyup', handlekeydownEvent)
+      document.removeEventListener('keydown', handleKeyDownEvent)
     }
   })
 
   return (
-      <div>
-        <div className={"mb-2 h-10 relative"}>
-          <p className={"absolute bottom-0 left-0 "}>{"Turn: " + levelState.turn}</p>
-          <button onClick={() => setLevelState(level.getInitialLevelState())}
-                  className="absolute bottom-0 right-0 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Reset
-          </button>
-        </div>
+      <div className="flex justify-center">
         <div>
-          <Board key={"board"} level={level} levelState={levelState}/>
+          <div className="mb-2 h-10 relative">
+            <p className="absolute bottom-0 left-0">
+              {"Turn: " + levelState.turn}
+            </p>
+            <div className="absolute bottom-0 right-0">
+              <BlueButton text="Reset" onClick={() => setLevelState(level.getInitialLevelState())}/>
+            </div>
+          </div>
+          <Board level={level} levelState={levelState}/>
         </div>
       </div>
   );

@@ -1,8 +1,8 @@
-import {GridCoordinates} from "@/src/Shared/Classes/GridCoordinates";
-import {Level} from "@/src/Shared/Classes/Level";
+import GridCoordinates from "@/src/Shared/Classes/GridCoordinates";
+import Level from "@/src/Shared/Classes/Level";
 import {DirectionEnum} from "@/src/Shared/Enum/DirectionEnum";
 
-export class LevelState {
+export default class LevelState {
   player: GridCoordinates;
   boxes: GridCoordinates[];
   turn: number;
@@ -30,20 +30,20 @@ export class LevelState {
       return null;
     }
     // Check if player tries to move into a wall or out of bounds
-    const newPlayerCrds = this.player.getShifted(direction);
-    if (!level.isValidPlaceForObjectAtCoordinates(newPlayerCrds)) {
+    const newPlayerCoords = this.player.getShifted(direction);
+    if (!level.isValidPlaceForObjectAt(newPlayerCoords)) {
       return null;
     }
     // Prepare new level instance
-    const newLevelState = new LevelState(newPlayerCrds, this.boxes, this.turn+1, this.won);
+    const newLevelState = new LevelState(newPlayerCoords, this.boxes, this.turn+1, this.won);
     // Check if player tries to move a box
-    const movedBoxIdx = this.getBoxIdxAt(newPlayerCrds);
+    const movedBoxIdx = this.getBoxIdxAt(newPlayerCoords);
     if (movedBoxIdx != null) {
-      const newBoxCrds = newPlayerCrds.getShifted(direction);
-      if (level.isValidPlaceForObjectAtCoordinates(newBoxCrds) && this.getBoxIdxAt(newBoxCrds) == null) {
+      const newBoxCoords = newPlayerCoords.getShifted(direction);
+      if (level.isValidPlaceForObjectAt(newBoxCoords) && this.getBoxIdxAt(newBoxCoords) == null) {
         // There is nothing preventing the box from being moved
-        newLevelState.boxes[movedBoxIdx] = newBoxCrds;
-        newLevelState.won = newLevelState.boxes.every((boxCrds) => level.isGoalAt(boxCrds));
+        newLevelState.boxes[movedBoxIdx] = newBoxCoords;
+        newLevelState.won = newLevelState.boxes.every((box) => level.isGoalAt(box));
       } else {
         // Player tries to move a box which cannot be moved, do not move the player
         return null;
