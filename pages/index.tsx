@@ -1,6 +1,6 @@
 import React from "react";
 import "./globals.css";
-import SiteNav, {PagesEnum} from "@/src/Shared/Components/SiteNav";
+import SiteNav, {PagesEnum} from "@/src/Components/SiteNav";
 
 export default function Home() {
   return (

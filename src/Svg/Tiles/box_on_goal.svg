@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+	 viewBox="0 0 512 512" xml:space="preserve">
+<g>
+	<rect x="5" y="6" style="fill:#8F6127;" width="500" height="500"/>
+	<rect x="88" y="0" style="fill:#AD7E4E;" width="422" height="88"/>
+	<rect x="422" y="88" style="fill:#CA965A;" width="88" height="422"/>
+	<rect x="0" y="422" style="fill:#AD7E4E;" width="422" height="422"/>
+	<rect x="0" y="0" style="fill:#CA965A;" width="88" height="422"/>
+  	<polygon style="fill:#70491E;" points="338.4392,422 422,338.4392 422,238.8848 238.8848,422 	"/>
+<polygon style="fill:#70491E;" points="422,139.3216 422,88 374.1584,88 88,374.1584 88,422 139.3216,422 	"/>
+<polygon style="fill:#70491E;" points="88,274.604 274.604,88 175.0408,88 88,175.0408 "/>
+  <circle fill="none" stroke="#00FF00" opacity="0.6" stroke-width="20" cx="256" cy="256" r="120"/>
+  <circle fill="none" stroke="#00FF00" opacity="0.6" stroke-width="20" cx="256" cy="256" r="30"/>
+</g>
+</svg>

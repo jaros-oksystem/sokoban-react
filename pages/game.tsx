@@ -1,13 +1,13 @@
 'use client'
 
-import GamePlayable from "@/src/Shared/Components/GamePlayable";
+import GamePlayable from "@/src/Components/GamePlayable";
 import "./globals.css";
-import SiteNav, {PagesEnum} from "@/src/Shared/Components/SiteNav";
+import SiteNav, {PagesEnum} from "@/src/Components/SiteNav";
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
-import getLevelFromLevelCode from "@/src/Shared/Util/LevelCode/DecodingUtils";
-import Level from "@/src/Shared/Classes/Level";
-import {DEFAULT_LEVEL_CODE} from "@/src/Shared/Contants/Levels";
+import getLevelFromLevelCode from "@/src/Util/LevelCode/DecodingUtils";
+import Level from "@/src/Classes/Level";
+import {DEFAULT_LEVEL_CODE_GAME} from "@/src/Constants/Levels";
 
 export default function Game() {
   const [level, setLevel] = useState<Level | null>(null);
@@ -28,7 +28,7 @@ export default function Game() {
         // Invalid level
       }
     }
-    setLevel(getLevelFromLevelCode(DEFAULT_LEVEL_CODE));
+    setLevel(getLevelFromLevelCode(DEFAULT_LEVEL_CODE_GAME));
   }, [router.isReady, router.query.level]);
 
   return (
