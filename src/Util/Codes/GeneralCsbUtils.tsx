@@ -4,7 +4,7 @@ import {
   BASE64_ZEROS_CHAR,
   base64ToDecimal,
   decimalToBase64
-} from "@/src/Util/LevelCode/BaseConversionUtils";
+} from "@/src/Util/Codes/BaseConversionUtils";
 import GridCoordinates from "@/src/Classes/GridCoordinates";
 import {enlargeMatrixOnEachSide, getMatrixOfSize, getMatrixWithConditionalFill} from "@/src/Util/MatrixUtils";
 

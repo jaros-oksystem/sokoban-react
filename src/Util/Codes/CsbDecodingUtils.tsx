@@ -1,5 +1,5 @@
 import Level from "@/src/Classes/Level";
-import {base64StringToBinaryString, base64ToDecimal} from "@/src/Util/LevelCode/BaseConversionUtils";
+import {base64StringToBinaryString, base64ToDecimal} from "@/src/Util/Codes/BaseConversionUtils";
 import {
   ALT_SEPARATOR,
   binaryStringToBitmap,
@@ -8,19 +8,19 @@ import {
   SEPARATOR,
   tileIdToCoordinates,
   trimmedPlayableMaskToWallBitmap
-} from "@/src/Util/LevelCode/LevelCodeUtils";
+} from "@/src/Util/Codes/GeneralCsbUtils";
 import {getMatrixOfSize, getMatrixWithConditionalFill} from "@/src/Util/MatrixUtils";
 import {LevelTileEnum} from "@/src/Enum/LevelTileEnum";
 import GridCoordinates from "@/src/Classes/GridCoordinates";
 
 const INVALID_CODE_MESSAGE = "Invalid code";
 
-export default function getLevelFromLevelCode(levelCode: string): Level {
-  const codeParts = levelCode.replaceAll(ALT_SEPARATOR, SEPARATOR).split(SEPARATOR);
+export default function getLevelFromCsbCode(csbCode: string): Level {
+  const codeParts = csbCode.replaceAll(ALT_SEPARATOR, SEPARATOR).split(SEPARATOR);
   if (codeParts.length != 6) {
     throw new Error(INVALID_CODE_MESSAGE);
   }
-  const isAltSeparatorAt: boolean[] = levelCode.split('')
+  const isAltSeparatorAt: boolean[] = csbCode.split('')
       .filter(c => c == ALT_SEPARATOR || c == SEPARATOR)
       .map(s => s == ALT_SEPARATOR)
       .reduce((list: boolean[], isAltSeparator: boolean) => [...list , isAltSeparator], []);

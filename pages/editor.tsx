@@ -6,8 +6,8 @@ import SiteNav, {PagesEnum} from "@/src/Components/SiteNav";
 import React, {useEffect, useState} from "react";
 import Level from "@/src/Classes/Level";
 import {useRouter} from "next/router";
-import getLevelFromLevelCode from "@/src/Util/LevelCode/DecodingUtils";
-import {DEFAULT_LEVEL_CODE_EDITOR} from "@/src/Constants/Levels";
+import getLevelFromCsbCode from "@/src/Util/Codes/CsbDecodingUtils";
+import {DEFAULT_CSB_CODE_FOR_EDITOR} from "@/src/Constants/Levels";
 
 export default function Editor() {
   const [level, setLevel] = useState<Level | null>(null);
@@ -18,17 +18,17 @@ export default function Editor() {
     if (!router.isReady) {
       return;
     }
-    const levelCode = router.query.level;
-    if (levelCode?.constructor === String) {
+    const csbCode = router.query.level;
+    if (csbCode?.constructor === String) {
       try {
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        setLevel(getLevelFromLevelCode(levelCode));
+        setLevel(getLevelFromCsbCode(csbCode));
         return;
       } catch {
         // Invalid level
       }
     }
-    setLevel(getLevelFromLevelCode(DEFAULT_LEVEL_CODE_EDITOR));
+    setLevel(getLevelFromCsbCode(DEFAULT_CSB_CODE_FOR_EDITOR));
   }, [router.isReady, router.query.level]);
 
   return (

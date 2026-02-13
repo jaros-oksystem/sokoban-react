@@ -10,7 +10,7 @@ import {
   BASE64_BITS,
   binaryStringToBase64String,
   decimalToBase64
-} from "@/src/Util/LevelCode/BaseConversionUtils";
+} from "@/src/Util/Codes/BaseConversionUtils";
 import {
   ALT_SEPARATOR,
   bitmapToBinaryString,
@@ -19,16 +19,16 @@ import {
   coordinatesToTileId, getInvertedBitmap,
   SEPARATOR,
   trimmedPlayableMaskToWallBitmap
-} from "@/src/Util/LevelCode/LevelCodeUtils";
+} from "@/src/Util/Codes/GeneralCsbUtils";
 import {getStringWithChangedCharAt} from "@/src/Util/StringUtils";
 
-export default function getLevelCodeFromLevel(level: Level): string {
-  const levelCode = createCode(level);
-  const transLevelCode = createCode(level.getLevelTransposed());
-  if (transLevelCode.length < levelCode.length) {
-    return getStringWithChangedCharAt(transLevelCode, ALT_SEPARATOR, transLevelCode.indexOf(SEPARATOR));
+export default function getCsbCodeFromLevel(level: Level): string {
+  const csbCode = createCode(level);
+  const transLevelCsbCode = createCode(level.getLevelTransposed());
+  if (transLevelCsbCode.length < csbCode.length) {
+    return getStringWithChangedCharAt(transLevelCsbCode, ALT_SEPARATOR, transLevelCsbCode.indexOf(SEPARATOR));
   }
-  return levelCode;
+  return csbCode;
 }
 
 function createCode(level: Level): string {

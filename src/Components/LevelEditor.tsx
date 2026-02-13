@@ -3,15 +3,16 @@ import GridCoordinates from "@/src/Classes/GridCoordinates";
 import {getTileTypeName, LevelTileEnum} from "@/src/Enum/LevelTileEnum";
 import Level from "@/src/Classes/Level";
 import GameBoard from "@/src/Components/Board/GameBoard";
-import getLevelCodeFromLevel from "@/src/Util/LevelCode/EncodingUtils";
+import getCsbCodeFromLevel from "@/src/Util/Codes/CsbEncodingUtils";
 import {isStringAPositiveInteger} from "@/src/Util/StringUtils";
 import Separator from "@/src/Components/BasicComponents/Separator";
-import BlueButton from "@/src/Components/BasicComponents/BlueButton";
 import ImportLevelButton from "@/src/Components/DialogueBox/ImportExport/ImportLevelButton";
 import ExportLevelButton from "@/src/Components/DialogueBox/ImportExport/ExportLevelButton";
 import Link from "next/link";
 import {GAME_PAGE_PATH} from "@/src/Constants/PagePaths";
 import {DirectionEnum, getDirectionEnumFromKeyboardEventKey} from "@/src/Enum/DirectionEnum";
+import ColoredButton from "@/src/Components/BasicComponents/ColoredButton";
+import {ColorEnum} from "@/src/Enum/ColorEnum";
 
 interface Props {
   initialLevel: Level
@@ -51,7 +52,7 @@ export default function LevelEditor({initialLevel}: Readonly<Props>) {
       setLenXText(level.lenX + "");
       setLenYText(level.lenY + "");
     } catch {
-      alert("Invalid level code.");
+      alert("Invalid CSB code.");
     }
   }
 
@@ -68,10 +69,10 @@ export default function LevelEditor({initialLevel}: Readonly<Props>) {
         setTileBrush(Math.max(0, Math.min(brushes.length-1, brushes.indexOf(tileBrush)+brushShift)));
       }
     }
-    document.addEventListener('keydown', handleKeyDownEvent)
+    document.addEventListener('keydown', handleKeyDownEvent);
     return () => {
       document.removeEventListener('keydown', handleKeyDownEvent)
-    }
+    };
   });
 
   return (
@@ -114,7 +115,7 @@ export default function LevelEditor({initialLevel}: Readonly<Props>) {
                   onChange={(e) => setLenYText(e.target.value)}/>
               <br/>
               <div className="col-span-3">
-                <BlueButton text="Set level size" onClick={() => setDimensionsHandler()} />
+                <ColoredButton content="Set level size" onClick={() => setDimensionsHandler()} />
               </div>
             </div>
           </div>
@@ -124,8 +125,8 @@ export default function LevelEditor({initialLevel}: Readonly<Props>) {
             <div className="my-1"/>
             <ImportLevelButton onImport={(level: Level) => loadLevel(level)} />
             <div className="my-2"/>
-            <Link className="pl-2" href={{ pathname: GAME_PAGE_PATH, query: { level: getLevelCodeFromLevel(level) }}}>
-              <BlueButton text={"\u2BC8 Play"}/>
+            <Link className="pl-2" href={{ pathname: GAME_PAGE_PATH, query: { level: getCsbCodeFromLevel(level) }}}>
+              <ColoredButton content={"\u2BC8 Play"} color={ColorEnum.CYAN}/>
             </Link>
           </div>
         </div>

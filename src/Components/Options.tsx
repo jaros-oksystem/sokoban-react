@@ -2,7 +2,7 @@ import {
   getOptionsFromLocalStorage,
   OptionInterface,
   saveOptionsToLocalStorage
-} from "@/src/Util/LocalStorage/OptionUtils";
+} from "@/src/Util/LocalStorage/OptionStorageUtils";
 import {useState} from "react";
 import Checkbox from "@/src/Components/BasicComponents/Checkbox";
 

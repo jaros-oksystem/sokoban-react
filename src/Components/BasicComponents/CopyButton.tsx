@@ -1,5 +1,5 @@
-import BlueButton from "@/src/Components/BasicComponents/BlueButton";
 import {useState} from "react";
+import ColoredButton from "@/src/Components/BasicComponents/ColoredButton";
 
 interface Props {
   textToCopy: string,
@@ -12,12 +12,12 @@ export default function CopyButton({textToCopy, text = copyEmoji + " Copy to cli
   const [buttonText, setButtonText] = useState<string>(text);
 
   function handleClick() {
-    navigator.clipboard.writeText(textToCopy);
+    navigator.clipboard.writeText(textToCopy).then(() => {});
     setButtonText(copyEmoji + " Copied!");
     setTimeout(() => setButtonText(text), 2000);
   }
 
   return (
-      <BlueButton text={buttonText} onClick={handleClick} />
+      <ColoredButton content={buttonText} onClick={handleClick} />
   );
 }

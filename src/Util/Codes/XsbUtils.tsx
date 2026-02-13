@@ -14,27 +14,22 @@ const PLAYER_ON_GOAL_CHAR = '+';
 const ERROR_CHAR = 'E';
 
 export function getLevelFromXsbCode(xsbCode: string): Level {
-  const dimensions = getDimensionsFromXsbCode(xsbCode);
   const xsbLines = xsbCode.split('\n');
-
+  const lenX = Math.max(...xsbLines.map(l => l.length));
+  const lenY = xsbLines.length;
   let player: GridCoordinates = new GridCoordinates(-1,-1);
   const boxes: GridCoordinates[] = [];
-  const tiles: LevelTileEnum[][] = getMatrixOfSize(dimensions.lenX, dimensions.lenY, LevelTileEnum.EMPTY);
+  const tiles: LevelTileEnum[][] = getMatrixOfSize(lenX, lenY, LevelTileEnum.EMPTY);
   for (let y = 0; y < xsbLines.length; y++) {
     for (let x = 0; x < xsbLines[y].length; x++) {
       switch (xsbLines[y].charAt(x)) {
-        case PLAYER_CHAR:
-          player = new GridCoordinates(x,y);
-          break;
-        case PLAYER_ON_GOAL_CHAR:
-          player = new GridCoordinates(x,y);
-          tiles[x][y] = LevelTileEnum.GOAL;
-          break;
-        case GOAL_CHAR:
-          tiles[x][y] = LevelTileEnum.GOAL;
+        case EMPTY_CHAR:
           break;
         case WALL_CHAR:
           tiles[x][y] = LevelTileEnum.WALL;
+          break;
+        case GOAL_CHAR:
+          tiles[x][y] = LevelTileEnum.GOAL;
           break;
         case BOX_CHAR:
           boxes.push(new GridCoordinates(x,y));
@@ -43,15 +38,19 @@ export function getLevelFromXsbCode(xsbCode: string): Level {
           tiles[x][y] = LevelTileEnum.GOAL;
           boxes.push(new GridCoordinates(x,y));
           break;
-        case EMPTY_CHAR:
+        case PLAYER_CHAR:
+          player = new GridCoordinates(x,y);
+          break;
+        case PLAYER_ON_GOAL_CHAR:
+          player = new GridCoordinates(x,y);
+          tiles[x][y] = LevelTileEnum.GOAL;
           break;
         default:
           throw new Error("Error parsing XSB code - unknown character");
       }
     }
   }
-
-  return new Level(dimensions.lenX, dimensions.lenY, tiles, boxes, player);
+  return new Level(lenX, lenY, tiles, boxes, player);
 }
 
 export function getXsbCodeFromLevel(level: Level): string {
@@ -59,12 +58,4 @@ export function getXsbCodeFromLevel(level: Level): string {
     return level.transformTileAtCoordinates(new GridCoordinates(y,x), EMPTY_CHAR, WALL_CHAR,
         GOAL_CHAR, BOX_CHAR, PLAYER_CHAR, BOX_ON_GOAL_CHAR, PLAYER_ON_GOAL_CHAR, ERROR_CHAR);
   }).map((row) => row.join('').trimEnd()).join("\n");
-}
-
-function getDimensionsFromXsbCode(xsbCode: string): {lenX: number, lenY: number} {
-  const lines = xsbCode.split('\n');
-  return {
-    lenX: Math.max(...lines.map(l => l.length)),
-    lenY: lines.length
-  }
 }

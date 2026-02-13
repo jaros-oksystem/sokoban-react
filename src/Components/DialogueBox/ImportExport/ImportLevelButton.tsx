@@ -1,28 +1,28 @@
 import Level from "@/src/Classes/Level";
 import DialogBoxButton from "@/src/Components/DialogueBox/DialogBoxButton";
-import BlueButton from "@/src/Components/BasicComponents/BlueButton";
 import {useState} from "react";
-import getLevelFromLevelCode from "@/src/Util/LevelCode/DecodingUtils";
-import {getLevelFromXsbCode} from "@/src/Util/LevelCode/XsbUtils";
-import LevelCodeArea from "@/src/Components/DialogueBox/ImportExport/LevelCodeArea";
-import XsbCodeArea from "@/src/Components/DialogueBox/ImportExport/XsbCodeArea";
+import getLevelFromCsbCode from "@/src/Util/Codes/CsbDecodingUtils";
+import {getLevelFromXsbCode} from "@/src/Util/Codes/XsbUtils";
+import CodeTextArea from "@/src/Components/DialogueBox/ImportExport/CodeTextArea";
+import ColoredButton from "@/src/Components/BasicComponents/ColoredButton";
+import {CodeTypeEnum} from "@/src/Enum/CodeTypeEnum";
 
 interface Props {
   onImport: (level: Level) => void;
 }
 
 export default function ImportLevelButton({onImport}: Readonly<Props>) {
-  const [levelCodeText, setLevelCodeText] = useState<string>("");
+  const [csbCodeText, setCsbCodeText] = useState<string>("");
   const [xsbCodeText, setXsbCodeText] = useState<string>("");
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  function handleLevelCodeImport() {
+  function handleCsbCodeImport() {
     try {
-      const level = getLevelFromLevelCode(levelCodeText);
+      const level = getLevelFromCsbCode(csbCodeText);
       onImport(level);
       setIsOpen(false);
     } catch {
-      alert("Invalid level code");
+      alert("Invalid CSB code");
     }
   }
 
@@ -37,22 +37,22 @@ export default function ImportLevelButton({onImport}: Readonly<Props>) {
   }
 
   function onOpenHandler() {
-    setLevelCodeText("");
+    setCsbCodeText("");
     setXsbCodeText("");
   }
 
   const importText = "\u21E9 Import";
 
   return (
-      <DialogBoxButton onOpen={onOpenHandler} isOpen={isOpen} setIsOpen={setIsOpen} buttonText={importText} title={"Import level"} content={
+      <DialogBoxButton onOpen={onOpenHandler} isOpen={isOpen} setIsOpen={setIsOpen} buttonContent={importText} title={"Import level"} content={
         <>
-          <LevelCodeArea value={levelCodeText} readOnly={false}
-                         onChange={(e) => setLevelCodeText(e.target.value)} />
-          <BlueButton text={importText} onClick={handleLevelCodeImport} />
+          <CodeTextArea codeType={CodeTypeEnum.CSB_CODE} value={csbCodeText} readOnly={false}
+                        onChange={(e) => setCsbCodeText(e.target.value)} />
+          <ColoredButton content={importText} onClick={handleCsbCodeImport} />
           <div className="my-4"/>
-          <XsbCodeArea value={xsbCodeText} readOnly={false}
+          <CodeTextArea codeType={CodeTypeEnum.XSB_CODE} value={xsbCodeText} readOnly={false}
                          onChange={(e) => setXsbCodeText(e.target.value)} />
-          <BlueButton text={importText} onClick={handleXsbCodeImport} />
+          <ColoredButton content={importText} onClick={handleXsbCodeImport} />
         </>
       }/>
   );

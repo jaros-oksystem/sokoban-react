@@ -4,6 +4,14 @@ import LevelState from "@/src/Classes/LevelState";
 import {getMatrixOfSize, getTransposedMatrix} from "@/src/Util/MatrixUtils";
 import {DirectionEnum, getOppositeDirection, getRotatedDirection} from "@/src/Enum/DirectionEnum";
 import {getAllReachableTiles} from "@/src/Util/StateExplorationUtils";
+import emptySvg from "@/src/Svg/Tiles/empty_tile.svg";
+import wallSvg from "@/src/Svg/Tiles/wall.svg";
+import goalSvg from "@/src/Svg/Tiles/goal.svg";
+import boxSvg from "@/src/Svg/Tiles/box.svg";
+import playerSvg from "@/src/Svg/Tiles/player.svg";
+import boxOnGoalSvg from "@/src/Svg/Tiles/box_on_goal.svg";
+import playerOnGoalSvg from "@/src/Svg/Tiles/player_on_goal.svg";
+import errorSvg from "@/src/Svg/Tiles/error.svg";
 
 export const NO_PLAYER_COORDINATES = new GridCoordinates(-1,-1);
 
@@ -26,7 +34,7 @@ export default class Level {
   // _______________________ Function section: get information about the level _______________________
 
   getInitialLevelState() {
-    return new LevelState(this, this.initialPlayer, this.initialBoxes.slice(), 0);
+    return new LevelState(this, this.initialPlayer, Array.from(this.initialBoxes), 0);
   }
 
   getTileAt(coordinates: GridCoordinates) {
@@ -93,7 +101,7 @@ export default class Level {
   }
 
   getLevelCopy() {
-    return new Level(this.lenX, this.lenY, this.levelTiles, this.initialBoxes, this.initialPlayer)
+    return new Level(this.lenX, this.lenY, this.levelTiles, this.initialBoxes, this.initialPlayer);
   }
 
   // _______________________ Function section: changing the level _______________________
@@ -243,18 +251,21 @@ export default class Level {
     const viableBoxMask: boolean[][] = this.getPlayableAreaMask();
     const corners: GridCoordinates[] = this.getAllCornersInMask(viableBoxMask);
     for (const corner of corners) {
-      viableBoxMask[corner.x][corner.y] = false;
+      if (!this.isGoalAt(corner)) {
+        viableBoxMask[corner.x][corner.y] = false;
+      }
       for (const direction of [DirectionEnum.RIGHT, DirectionEnum.DOWN]) {
         if (this.isValidPlaceForObjectAt(corner.getShifted(direction))) {
           const exploredTiles: GridCoordinates[] = [];
           let curPosition = corner;
           while (true) {
+            exploredTiles.push(curPosition);
             // If the line contains a goal, it is viable
             if (this.isGoalAt(curPosition)) {
               break;
             }
             // No goal was found and the search ended in a corner, the line is unviable
-            if (exploredTiles.length > 0 && this.isCornerAt(curPosition)) {
+            if (exploredTiles.length > 1 && this.isCornerAt(curPosition)) {
               for (const exploredTile of exploredTiles) {
                 viableBoxMask[exploredTile.x][exploredTile.y] = false;
               }
@@ -265,7 +276,6 @@ export default class Level {
             if (this.canBoxBePushedInDirectionAt(nextPosition, getRotatedDirection(direction))) {
               break;
             }
-            exploredTiles.push(curPosition);
             curPosition = nextPosition;
           }
         }
@@ -302,6 +312,22 @@ export default class Level {
     } else {
       return error;
     }
+  }
+
+  getSvgForTile(x: number, y: number, levelState?: LevelState) {
+    return this.transformTileAtCoordinates(new GridCoordinates(x,y), emptySvg, wallSvg,
+        goalSvg, boxSvg, playerSvg, boxOnGoalSvg, playerOnGoalSvg, errorSvg, levelState);
+  }
+
+  getCharForTile(x: number, y: number, levelState?: LevelState) {
+    return this.transformTileAtCoordinates(new GridCoordinates(x,y), "", "\u25A0",
+        "\u2E31", "\u2D54", "\u1433", "\u2D59", "\u1437", "\u2620", levelState);
+  }
+
+  getTileEnumForTile(x: number, y: number, levelState?: LevelState) {
+    return this.transformTileAtCoordinates(new GridCoordinates(x,y), LevelTileEnum.EMPTY, LevelTileEnum.WALL,
+        LevelTileEnum.GOAL, LevelTileEnum.BOX, LevelTileEnum.PLAYER, LevelTileEnum.BOX_ON_GOAL,
+        LevelTileEnum.PLAYER_ON_GOAL, LevelTileEnum.EMPTY, levelState);
   }
 
 }
