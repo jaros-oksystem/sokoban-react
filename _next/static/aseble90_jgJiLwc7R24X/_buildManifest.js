@@ -1,18 +1,21 @@
 self.__BUILD_MANIFEST = {
   "/": [
-    "static/chunks/9e9642cb79296ebc.js"
+    "static/chunks/1b3768853e3c3324.js"
   ],
   "/_error": [
     "static/chunks/98290531fba0f7dc.js"
   ],
   "/editor": [
-    "static/chunks/fc2b51f6f9094db2.js"
+    "static/chunks/6d1df3539360054b.js"
   ],
   "/game": [
-    "static/chunks/c8ad62a2053d0c6b.js"
+    "static/chunks/aa35d5ba154e95c9.js"
+  ],
+  "/library": [
+    "static/chunks/da60bdcd7249c524.js"
   ],
   "/options": [
-    "static/chunks/8de2912cdbdd0dab.js"
+    "static/chunks/4b3c25d8802f38d5.js"
   ],
   "__rewrites": {
     "afterFiles": [],
@@ -30,6 +33,7 @@ self.__BUILD_MANIFEST = {
     "/_error",
     "/editor",
     "/game",
+    "/library",
     "/options"
   ]
 };self.__BUILD_MANIFEST_CB && self.__BUILD_MANIFEST_CB()
