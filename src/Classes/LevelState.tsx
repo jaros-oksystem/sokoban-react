@@ -44,17 +44,17 @@ export default class LevelState {
     }
     // Check if player tries to move a box
     const movedBoxIdx = this.getBoxIdxAt(newPlayerCoords);
+    const newBoxCoords = newPlayerCoords.getShifted(direction);
     if (movedBoxIdx != null) {
-      const newBoxCoords = newPlayerCoords.getShifted(direction);
       if (this.canBoxBePushedTo(newBoxCoords)) {
         // There is nothing preventing the box from being moved
-        this.boxes[movedBoxIdx] = newBoxCoords;
+        return this.getNewState(newPlayerCoords, 1, movedBoxIdx, newBoxCoords);
       } else {
         // Player tries to move a box which cannot be moved, do not move the player
         return null;
       }
     }
-    return new LevelState(this.parentLevel, newPlayerCoords, this.boxes, this.turn+1);
+    return this.getNewState(newPlayerCoords, 1);
   }
 
   createNewLevelStateForClick(clickCoords: GridCoordinates): LevelState|null {
@@ -77,8 +77,7 @@ export default class LevelState {
         const newBoxCoords = clickCoords.getShifted(pushDirection);
         if (this.canBoxBePushedTo(newBoxCoords)) {
           // There is nothing preventing the box from being moved
-          this.boxes[movedBoxIdx] = newBoxCoords;
-          return new LevelState(this.parentLevel, clickCoords, this.boxes, this.turn+1);
+          return this.getNewState(clickCoords, 1, movedBoxIdx, newBoxCoords);
         } else {
           // Player tries to move a box which cannot be moved, do not move the player
           return null;
@@ -89,7 +88,16 @@ export default class LevelState {
         this.player, clickCoords, (c) => {
       return !this.parentLevel.isValidPlaceForObjectAt(c) || this.getBoxIdxAt(c) != null;
     });
-    return movesRequired == null ? null : new LevelState(this.parentLevel, clickCoords, this.boxes, this.turn+movesRequired);
+    return movesRequired == null ? null : this.getNewState(clickCoords, movesRequired);
+  }
+
+  getNewState(newPlayerCoords: GridCoordinates, addedMoves: number, movedBoxIdx?: number, movedBoxCoords?: GridCoordinates): LevelState {
+    const newBoxes = [];
+    this.boxes.forEach((box) => newBoxes.push(box));
+    if (movedBoxIdx !== undefined && movedBoxCoords !== undefined) {
+      newBoxes[movedBoxIdx] = movedBoxCoords;
+    }
+    return new LevelState(this.parentLevel, newPlayerCoords, newBoxes, this.turn+addedMoves);
   }
 
   canBoxBePushedTo(coords: GridCoordinates): boolean {

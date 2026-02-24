@@ -44,7 +44,7 @@ export default function Game() {
         <SiteNav activatePage={PagesEnum.GAME}/>
         <div className="mt-2">
           {
-            routerReady && <GamePlayable libraryLevelUuid={levelUuid} urlLevel={level}/>
+            routerReady && <GamePlayable urlLibraryLevelUuid={levelUuid} urlLevel={level}/>
           }
         </div>
       </div>

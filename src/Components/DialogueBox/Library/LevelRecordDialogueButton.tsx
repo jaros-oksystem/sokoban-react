@@ -43,12 +43,11 @@ export default function LevelRecordDialogueButton({onSave, defaultValues}: Reado
       getLevelFromCsbCode(csbCodeToSave);
 
       setIsOpen(false);
-      const retValue: LevelRecord = {
-        uuid: newRecord ? crypto.randomUUID() : defaultValues?.uuid,
-        levelName: levelName,
-        csbCode: csbCodeToSave,
-        order: newRecord ? 0 : Number(order),
-      }
+      const retValue = new LevelRecord(
+          newRecord ? crypto.randomUUID() : defaultValues?.uuid,
+          newRecord ? 0 : Number(order),
+          levelName,
+          csbCodeToSave);
       onSave(retValue);
     } catch {
       alert("Invalid code");

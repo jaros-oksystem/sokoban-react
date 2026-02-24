@@ -1,20 +1,14 @@
 import React, {useState} from "react";
 import {ColorEnum} from "@/src/Enum/ColorEnum";
-import {
-  findCollectionByUuid,
-  findLevelRecordByUuid,
-  getLibraryFromLocalStorage
-} from "@/src/Util/LocalStorage/LibraryStorageUtils";
-import Level from "@/src/Classes/Level";
+import {findCollectionByUuid, getLibraryFromLocalStorage} from "@/src/Util/LocalStorage/LibraryStorageUtils";
 import LevelCollection from "@/src/Classes/LevelCollection";
 import LevelRecord from "@/src/Classes/LevelRecord";
-import getLevelFromCsbCode from "@/src/Util/Codes/CsbDecodingUtils";
 import {getDirectionEnumFromKeyboardEventKey} from "@/src/Enum/DirectionEnum";
 import ColoredButton from "@/src/Components/BasicComponents/ColoredButton";
 
 
 interface Props {
-  onSelect: (level: Level) => void,
+  onSelect: (levelUuid: string) => void,
   initialCollectionUuid: string,
   initialLevelUuid: string,
   isLevelWon: boolean
@@ -44,13 +38,12 @@ export default function LibraryLevelSelector({onSelect, initialCollectionUuid, i
     }
     setSelectedCollectionUuid(collUuid);
     setSelectedLevelUuid(firstLevel.uuid);
-    onSelect(getLevelFromCsbCode(firstLevel.csbCode));
+    onSelect(firstLevel.uuid);
   }
 
   function handleOnSelectLevel(levelUuid: string) {
-    const levelRecord = findLevelRecordByUuid(levelUuid);
     setSelectedLevelUuid(levelUuid);
-    onSelect(getLevelFromCsbCode(levelRecord.csbCode));
+    onSelect(levelUuid);
   }
 
   function handleOnNextLevel() {
@@ -58,7 +51,7 @@ export default function LibraryLevelSelector({onSelect, initialCollectionUuid, i
     const nextLevelIdx = coll.levels.findIndex(l => l.uuid == selectedLevelUuid) + 1;
     const nextLevelRecord = coll.levels[nextLevelIdx];
     setSelectedLevelUuid(nextLevelRecord.uuid);
-    onSelect(getLevelFromCsbCode(nextLevelRecord.csbCode));
+    onSelect(nextLevelRecord.uuid);
   }
 
   return (

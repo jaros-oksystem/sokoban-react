@@ -4,10 +4,11 @@ export default class LevelRecord {
   levelName: string;
   csbCode: string;
 
-  constructor(order: number, levelName: string, csbCode: string) {
-    this.uuid = crypto.randomUUID();
+  constructor(uuid: string, order: number, levelName: string, csbCode: string) {
+    this.uuid = uuid;
     this.order = order;
     this.levelName = levelName;
     this.csbCode = csbCode;
   }
+
 }

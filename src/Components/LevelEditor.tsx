@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import GridCoordinates from "@/src/Classes/GridCoordinates";
 import {getTileTypeName, LevelTileEnum} from "@/src/Enum/LevelTileEnum";
 import Level from "@/src/Classes/Level";
@@ -13,18 +13,43 @@ import {GAME_PAGE_PATH} from "@/src/Constants/PagePaths";
 import {DirectionEnum, getDirectionEnumFromKeyboardEventKey} from "@/src/Enum/DirectionEnum";
 import ColoredButton from "@/src/Components/BasicComponents/ColoredButton";
 import {ColorEnum} from "@/src/Enum/ColorEnum";
+import {router} from "next/client";
+import {
+  getSavedEditorLevelCsbCodeFromLocalStorage,
+  saveSavedEditorLevelCsbCodeToLocalStorage
+} from "@/src/Util/LocalStorage/SavedPageStorageUtils";
+import getLevelFromCsbCode from "@/src/Util/Codes/CsbDecodingUtils";
+import {DEFAULT_CSB_CODE_FOR_EDITOR} from "@/src/Constants/Levels";
 
 interface Props {
-  initialLevel: Level
+  initialLevelCsbCode: string | null
 }
 
 const MAX_LEVEL_DIMENSION = 500;
+const BRUSHES_LIST = [LevelTileEnum.EMPTY, LevelTileEnum.WALL, LevelTileEnum.GOAL, LevelTileEnum.BOX, LevelTileEnum.PLAYER];
 
-export default function LevelEditor({initialLevel}: Readonly<Props>) {
-  const [level, setLevel] = useState<Level>(initialLevel);
+export default function LevelEditor({initialLevelCsbCode}: Readonly<Props>) {
+
+  // ____________________________________ Determine what level to load ____________________________________
+
+  let levelToLoadCsbCode;
+  const savedLevelCsbCode = getSavedEditorLevelCsbCodeFromLocalStorage();
+  if (initialLevelCsbCode != null) {
+    levelToLoadCsbCode = initialLevelCsbCode;
+  } else if (savedLevelCsbCode != null) {
+    levelToLoadCsbCode = savedLevelCsbCode;
+  } else {
+    levelToLoadCsbCode = DEFAULT_CSB_CODE_FOR_EDITOR;
+  }
+
+  // ____________________________________ useState ____________________________________
+
+  const [level, setLevel] = useState<Level>(getLevelFromCsbCode(levelToLoadCsbCode));
   const [tileBrush, setTileBrush] = useState<LevelTileEnum>(LevelTileEnum.WALL);
   const [lenXText, setLenXText] = useState(level.lenX + "");
   const [lenYText, setLenYText] = useState(level.lenY + "");
+
+  // ____________________________________ Functions ____________________________________
 
   function tileOnClickHandler(x: number, y: number) {
     level.changeLevelBasedOnBrushClick(new GridCoordinates(x,y), tileBrush);
@@ -56,7 +81,7 @@ export default function LevelEditor({initialLevel}: Readonly<Props>) {
     }
   }
 
-  const brushes = [LevelTileEnum.EMPTY, LevelTileEnum.WALL, LevelTileEnum.GOAL, LevelTileEnum.BOX, LevelTileEnum.PLAYER];
+  // ____________________________________ Listeners ____________________________________
 
   useEffect(() => {
     function handleKeyDownEvent(e: KeyboardEvent) {
@@ -66,14 +91,28 @@ export default function LevelEditor({initialLevel}: Readonly<Props>) {
             direction == DirectionEnum.UP ? -1 :
             direction == DirectionEnum.DOWN ? 1 :
             0;
-        setTileBrush(Math.max(0, Math.min(brushes.length-1, brushes.indexOf(tileBrush)+brushShift)));
+        setTileBrush(Math.max(0, Math.min(BRUSHES_LIST.length-1, BRUSHES_LIST.indexOf(tileBrush)+brushShift)));
       }
     }
     document.addEventListener('keydown', handleKeyDownEvent);
-    return () => {
-      document.removeEventListener('keydown', handleKeyDownEvent)
-    };
+    return () => document.removeEventListener('keydown', handleKeyDownEvent);
   });
+
+  const saveCurrentLevelToLocalStorage = useCallback(() => {
+    saveSavedEditorLevelCsbCodeToLocalStorage(getCsbCodeFromLevel(level));
+  }, [level]);
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", saveCurrentLevelToLocalStorage);
+    return () => window.removeEventListener("beforeunload", saveCurrentLevelToLocalStorage);
+  }, [saveCurrentLevelToLocalStorage]);
+
+  useEffect(() => {
+    router.events.on("routeChangeStart", saveCurrentLevelToLocalStorage);
+    return () => router.events.off("routeChangeStart", saveCurrentLevelToLocalStorage);
+  }, [saveCurrentLevelToLocalStorage]);
+
+  // ____________________________________ Render ____________________________________
 
   return (
       <div>
@@ -81,7 +120,7 @@ export default function LevelEditor({initialLevel}: Readonly<Props>) {
           <div className="pl-2 w-28">
             <p className="text-xl">Tile brush:</p>
             {
-              brushes.map((tileEnum: LevelTileEnum) =>
+              BRUSHES_LIST.map((tileEnum: LevelTileEnum) =>
                 <div key={"Brush radio div for enum: " + tileEnum}>
                   <label>
                     <input type="radio"

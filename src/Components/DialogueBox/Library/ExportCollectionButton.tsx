@@ -17,11 +17,13 @@ export default function ExportCollectionButton({collection}: Readonly<Props>) {
 
   return (
       <DialogBoxButton onOpen={onOpen} isOpen={isOpen} setIsOpen={setIsOpen} buttonContent={"\u21E7 Export"} title={"Export collection"} content={
-        <>
+        <div className="flex flex-col">
           <textarea readOnly={true} value={collectionText}
                     className={"my-2 outline resize-none w-[500] read-only:bg-gray-200 h-96"}/>
-          <CopyButton textToCopy={collectionText} />
-        </>
+          <div>
+            <CopyButton textToCopy={collectionText} />
+          </div>
+        </div>
       }/>
   );
 

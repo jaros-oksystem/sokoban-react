@@ -143,17 +143,25 @@ export function findCollectionByUuid(collUuid: string): LevelCollection {
   return getLibraryFromLocalStorage()[getCollectionIdxByUuid(collUuid)];
 }
 
-export function findLevelRecordByUuid(levelUuid: string): LevelRecord {
-  const level = getLibraryFromLocalStorage()
-      .reduce((prev: LevelRecord[], next: LevelCollection) => prev.concat(next.levels), [])
-      .find(l => l.uuid === levelUuid);
-  if (level === undefined) {
+export function findLevelRecordByUuidWithCheck(levelUuid: string): LevelRecord {
+  const level = findLevelRecordByUuid(levelUuid);
+  if (level === null) {
     throw new Error("Level not found for uuid " + levelUuid);
   }
   return level;
 }
 
-export function findCollectionWithLevel(levelUuid: string): LevelCollection {
+export function findLevelRecordByUuid(levelUuid: string): LevelRecord | null {
+  const level = getLibraryFromLocalStorage()
+      .reduce((prev: LevelRecord[], next: LevelCollection) => prev.concat(next.levels), [])
+      .find(l => l.uuid === levelUuid);
+  if (level === undefined) {
+    return null;
+  }
+  return level;
+}
+
+export function findCollectionWithLevelWithCheck(levelUuid: string): LevelCollection {
   const collection = getLibraryFromLocalStorage()
       .find(coll => coll.levels.some(l => l.uuid == levelUuid))
   if (collection === undefined) {

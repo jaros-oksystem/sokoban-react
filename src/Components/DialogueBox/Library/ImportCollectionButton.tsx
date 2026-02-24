@@ -29,11 +29,13 @@ export default function ImportCollectionButton({onImport}: Readonly<Props>) {
 
   return (
       <DialogBoxButton onOpen={handleOnOpen} isOpen={isOpen} setIsOpen={setIsOpen} buttonContent={importText + " collection"} title={"Import collection"} content={
-        <>
+        <div className="flex flex-col">
           <textarea value={collectionText} onChange={(e) => setCollectionText(e.target.value)}
-                    className={"my-2 outline resize-none w-[500] read-only:bg-gray-200 h-96"}/>
+                      className={"my-2 outline resize-none w-[500] read-only:bg-gray-200 h-96"}/>
+          <div>
           <ColoredButton content={importText} onClick={handleCollectionImport} />
-        </>
+          </div>
+        </div>
       }/>
   );
 

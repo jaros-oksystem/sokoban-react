@@ -4,13 +4,10 @@ import LevelEditor from "@/src/Components/LevelEditor";
 import "./globals.css";
 import SiteNav, {PagesEnum} from "@/src/Components/SiteNav";
 import React, {useEffect, useState} from "react";
-import Level from "@/src/Classes/Level";
 import {useRouter} from "next/router";
-import getLevelFromCsbCode from "@/src/Util/Codes/CsbDecodingUtils";
-import {DEFAULT_CSB_CODE_FOR_EDITOR} from "@/src/Constants/Levels";
 
 export default function Editor() {
-  const [level, setLevel] = useState<Level | null>(null);
+  const [levelCsbCode, setLevelCsbCode] = useState<string | null | undefined>(undefined);
 
   // Try to load level from the query
   const router = useRouter();
@@ -22,13 +19,13 @@ export default function Editor() {
     if (csbCode?.constructor === String) {
       try {
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        setLevel(getLevelFromCsbCode(csbCode));
+        setLevelCsbCode(csbCode);
         return;
       } catch {
-        // Invalid level
+        // Invalid level code
       }
     }
-    setLevel(getLevelFromCsbCode(DEFAULT_CSB_CODE_FOR_EDITOR));
+    setLevelCsbCode(null);
   }, [router.isReady, router.query.level]);
 
   return (
@@ -36,7 +33,7 @@ export default function Editor() {
         <SiteNav activatePage={PagesEnum.EDITOR}/>
         <div className="mt-4">
           {
-              level != null && <LevelEditor initialLevel={level}/>
+              levelCsbCode !== undefined && <LevelEditor initialLevelCsbCode={levelCsbCode}/>
           }
         </div>
       </div>
