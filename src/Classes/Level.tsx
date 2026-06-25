@@ -1,7 +1,10 @@
 import {LevelTileEnum} from "@/src/Enum/LevelTileEnum";
 import GridCoordinates from "@/src/Classes/GridCoordinates";
 import LevelState from "@/src/Classes/LevelState";
-import {getMatrixOfSize, getTransposedMatrix} from "@/src/Util/MatrixUtils";
+import {
+  getMatrixOfSize,
+  getTransposedMatrix, getGridCoordinatesSatisfyingConditionInMatrix
+} from "@/src/Util/MatrixUtils";
 import {DirectionEnum, getOppositeDirection, getRotatedDirection} from "@/src/Enum/DirectionEnum";
 import {getAllReachableTiles} from "@/src/Util/StateExplorationUtils";
 import emptySvg from "@/src/Svg/Tiles/empty_tile.svg";
@@ -46,26 +49,26 @@ export default class Level {
   }
 
   isWallAt(coordinates: GridCoordinates) {
-    return this.getTileAt(coordinates) == LevelTileEnum.WALL;
+    return this.getTileAt(coordinates) === LevelTileEnum.WALL;
   }
 
   isGoalAt(coordinates: GridCoordinates) {
-    return this.getTileAt(coordinates) == LevelTileEnum.GOAL;
+    return this.getTileAt(coordinates) === LevelTileEnum.GOAL;
   }
 
   isEmptyTileAt(coordinates: GridCoordinates) {
-    return this.getTileAt(coordinates) == LevelTileEnum.EMPTY;
+    return this.getTileAt(coordinates) === LevelTileEnum.EMPTY;
   }
 
   isInitiallyEmptyAt(coordinates: GridCoordinates) {
     return this.isEmptyTileAt(coordinates) &&
       !this.isInitialPlayerAt(coordinates) &&
-      this.getInitialBoxIdxAt(coordinates) == null;
+      this.getInitialBoxIdxAt(coordinates) === null;
   }
 
   getInitialBoxIdxAt(coordinates: GridCoordinates): number|null {
     const idx = this.initialBoxes.findIndex((e) => e.equals(coordinates));
-    return idx == -1 ? null : idx;
+    return idx === -1 ? null : idx;
   }
 
   isValidPlaceForObjectAt(coordinates: GridCoordinates){
@@ -127,7 +130,7 @@ export default class Level {
     const isEmptyTile = this.isEmptyTileAt(coordinates);
     const isWall = this.isWallAt(coordinates);
     const isGoal = this.isGoalAt(coordinates);
-    const isBox = this.getInitialBoxIdxAt(coordinates) != null;
+    const isBox = this.getInitialBoxIdxAt(coordinates) !== null;
     const isPlayer = this.isInitialPlayerAt(coordinates);
 
     switch (tileEnum) {
@@ -222,6 +225,12 @@ export default class Level {
     );
   }
 
+  hasAccessibleBoundaries(): boolean {
+    const playableMask = this.getPlayableAreaMask();
+    return playableMask[0].some(Boolean) || playableMask[this.lenX-1].some(Boolean) ||
+        playableMask.some((col) => col[0] || col[this.lenY-1]);
+  }
+
   // _______________________ Function section: creating masks _______________________
 
   getPlayableAreaMask(): boolean[][] {
@@ -232,28 +241,21 @@ export default class Level {
   }
 
   getAllCornersInMask(mask: boolean[][]): GridCoordinates[] {
-    const corners: GridCoordinates[] = [];
-    for (let x = 0; x < this.lenX; x++) {
-      for (let y = 0; y < this.lenY; y++) {
-        if (!mask[x][y]) {
-          continue;
-        }
-        const tile = new GridCoordinates(x,y);
-        if (this.isCornerAt(tile)) {
-          corners.push(tile);
-        }
-      }
-    }
-    return corners;
+    return getGridCoordinatesSatisfyingConditionInMatrix(mask.length, mask[0].length,
+        (x,y) => mask[x][y] && this.isCornerAt(new GridCoordinates(x,y)));
   }
 
-  getViableBoxMask(): boolean[][] {
+  getSimpleViableBoxMask(): boolean[][] {
     const viableBoxMask: boolean[][] = this.getPlayableAreaMask();
     const corners: GridCoordinates[] = this.getAllCornersInMask(viableBoxMask);
     for (const corner of corners) {
       if (!this.isGoalAt(corner)) {
+        // Corner without a goal is unviable
         viableBoxMask[corner.x][corner.y] = false;
       }
+      // Find tiles on which a box could only move in a line without ever reaching a goal
+      // These lines will always start and end in a corner, so the search also starts and ends in a corner
+      // The search does not need to be done bidirectionally, so the following cycle is done only in 2 directions
       for (const direction of [DirectionEnum.RIGHT, DirectionEnum.DOWN]) {
         if (this.isValidPlaceForObjectAt(corner.getShifted(direction))) {
           const exploredTiles: GridCoordinates[] = [];
@@ -291,7 +293,7 @@ export default class Level {
     const isEmpty = this.isEmptyTileAt(coords);
     const isWall = this.isWallAt(coords);
     const isGoal = this.isGoalAt(coords);
-    const isBox = levelState ? levelState.getBoxIdxAt(coords) != null : this.getInitialBoxIdxAt(coords) != null;
+    const isBox = levelState ? levelState.getBoxIdxAt(coords) !== null : this.getInitialBoxIdxAt(coords) !== null;
     const isPlayer = levelState ? levelState.isPlayerAt(coords) : this.isInitialPlayerAt(coords);
     if ((isWall && isPlayer) || (isWall && isBox) || (isBox && isPlayer)) {
       return error;

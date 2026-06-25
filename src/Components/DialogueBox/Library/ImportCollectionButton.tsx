@@ -32,8 +32,8 @@ export default function ImportCollectionButton({onImport}: Readonly<Props>) {
         <div className="flex flex-col">
           <textarea value={collectionText} onChange={(e) => setCollectionText(e.target.value)}
                       className={"my-2 outline resize-none w-[500] read-only:bg-gray-200 h-96"}/>
-          <div>
-          <ColoredButton content={importText} onClick={handleCollectionImport} />
+          <div className="mx-auto">
+            <ColoredButton content={importText} onClick={handleCollectionImport} />
           </div>
         </div>
       }/>

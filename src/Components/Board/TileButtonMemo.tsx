@@ -9,7 +9,7 @@ interface Props {
 }
 
 export const TileButtonMemo = memo(TileButton,
-    (oldProps, newProps) => oldProps.tileType == newProps.tileType);
+    (oldProps, newProps) => oldProps.tileType === newProps.tileType);
 
 export function TileButton({className, content, tileSize} : Readonly<Props>){
   return <button

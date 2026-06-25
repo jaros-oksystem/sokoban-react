@@ -55,9 +55,11 @@ export default function CollectionDialogueButton({onSave, defaultValues}: Readon
                     onChange={(e) => setCollDescription(e.target.value)}
                     className="my-2 outline read-only:bg-gray-200"/>
           <div className="mx-5"></div>
+          <div className="mx-auto">
           <ColoredButton content={newCollection ? "Create" : "Save"}
                          color={colorEnum}
                          onClick={handleOnSave} />
+          </div>
         </div>
       }/>
   );

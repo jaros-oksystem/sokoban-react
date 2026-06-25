@@ -25,7 +25,7 @@ export default function LevelLibrary() {
   }
 
   function handleNewCollectionCreate(newCollection: LevelCollection) {
-    if (getLibraryFromLocalStorage().some(c => c.uuid == newCollection.uuid)) {
+    if (getLibraryFromLocalStorage().some(c => c.uuid === newCollection.uuid)) {
       alert("Collection already exists");
       return;
     }

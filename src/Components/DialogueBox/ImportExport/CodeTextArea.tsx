@@ -1,4 +1,4 @@
-import {DEFAULT_CSB_FOR_GAME, DEFAULT_XSB_CODE} from "@/src/Constants/Levels";
+import {FALLBACK_CSB_CODE_FOR_GAME, DEFAULT_XSB_CODE} from "@/src/Constants/Levels";
 import { ChangeEvent } from "react";
 import {CodeTypeEnum} from "@/src/Enum/CodeTypeEnum";
 
@@ -12,9 +12,9 @@ interface Props {
 
 export default function CodeTextArea({value, codeType, readOnly = false, onChange = () => {}, includeTitle = true}: Readonly<Props>) {
   let title, placeholder, classNameSpecific;
-  if (codeType == CodeTypeEnum.CSB_CODE) {
+  if (codeType === CodeTypeEnum.CSB_CODE) {
     title = "CSB code:";
-    placeholder = DEFAULT_CSB_FOR_GAME;
+    placeholder = FALLBACK_CSB_CODE_FOR_GAME;
     classNameSpecific = "h-24 ";
   } else {
     title = "XSB code:";

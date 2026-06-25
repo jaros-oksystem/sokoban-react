@@ -19,7 +19,7 @@ import {
   saveSavedEditorLevelCsbCodeToLocalStorage
 } from "@/src/Util/LocalStorage/SavedPageStorageUtils";
 import getLevelFromCsbCode from "@/src/Util/Codes/CsbDecodingUtils";
-import {DEFAULT_CSB_CODE_FOR_EDITOR} from "@/src/Constants/Levels";
+import {FALLBACK_CSB_CODE_FOR_EDITOR} from "@/src/Constants/Levels";
 
 interface Props {
   initialLevelCsbCode: string | null
@@ -34,12 +34,12 @@ export default function LevelEditor({initialLevelCsbCode}: Readonly<Props>) {
 
   let levelToLoadCsbCode;
   const savedLevelCsbCode = getSavedEditorLevelCsbCodeFromLocalStorage();
-  if (initialLevelCsbCode != null) {
+  if (initialLevelCsbCode !== null) {
     levelToLoadCsbCode = initialLevelCsbCode;
-  } else if (savedLevelCsbCode != null) {
+  } else if (savedLevelCsbCode !== null) {
     levelToLoadCsbCode = savedLevelCsbCode;
   } else {
-    levelToLoadCsbCode = DEFAULT_CSB_CODE_FOR_EDITOR;
+    levelToLoadCsbCode = FALLBACK_CSB_CODE_FOR_EDITOR;
   }
 
   // ____________________________________ useState ____________________________________
@@ -86,10 +86,10 @@ export default function LevelEditor({initialLevelCsbCode}: Readonly<Props>) {
   useEffect(() => {
     function handleKeyDownEvent(e: KeyboardEvent) {
       const direction = getDirectionEnumFromKeyboardEventKey(e.key);
-      if (direction != null) {
+      if (direction !== null) {
         const brushShift =
-            direction == DirectionEnum.UP ? -1 :
-            direction == DirectionEnum.DOWN ? 1 :
+            direction === DirectionEnum.UP ? -1 :
+            direction === DirectionEnum.DOWN ? 1 :
             0;
         setTileBrush(Math.max(0, Math.min(BRUSHES_LIST.length-1, BRUSHES_LIST.indexOf(tileBrush)+brushShift)));
       }
@@ -126,7 +126,7 @@ export default function LevelEditor({initialLevelCsbCode}: Readonly<Props>) {
                     <input type="radio"
                            name="brushRadio"
                            value={tileEnum}
-                           checked={tileBrush == tileEnum}
+                           checked={tileBrush === tileEnum}
                            onChange={() => setTileBrush(tileEnum)}
                     /> {getTileTypeName(Number(tileEnum))}
                   </label>

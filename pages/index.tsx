@@ -7,17 +7,29 @@ export default function Home() {
       <>
         <SiteNav activatePage={PagesEnum.INDEX}/>
         <main className="mt-6 mx-auto w-150">
+          <h1 className="text-2xl">Sokoban web application written in React</h1>
+          <br/>
           <p>
-            Sokoban is a classic puzzle game that originated in Japan in the early 1980s.
-            The objective is simple: push all the boxes onto designated storage locations.
-            The game follows these rules:
+            This web application has the following features:
           </p>
-          <ul className="list-inside list-disc">
-            <li>You control a character who can move up, down, left, or right.</li>
-            <li>You can push boxes, but you cannot pull them.</li>
-            <li>A box can only be pushed if there is an empty space behind it.</li>
-            <li>The goal is to move all boxes onto the marked storage locations.</li>
-            <li>You cannot walk through walls or boxes.</li>
+          <ul className="list-inside list-disc ml-8">
+            <li>Sokoban game playable with keyboard or mouse</li>
+            <li>Level editor with import/export functionality</li>
+            <li>Support for 2 types of level formats: XSB and CSB</li>
+            <li>Level solver with customizable parameters (the solver can only search for an optimal solution)</li>
+            <li>Customizable level library (levels can then be selected in the Game and Solver pages</li>
+            <li>Graphic options for the game board</li>
+            <li>Operates fully on the local device</li>
+          </ul>
+          <br/>
+          <p>
+            The CSB (Compact sokoban) level format has been developed solely for this application. It has the following properties:
+          </p>
+          <ul className="list-inside list-disc ml-8">
+            <li>Single line</li>
+            <li>Uses only URL safe characters (68 characters total)</li>
+            <li>Usually 3-4x shorter than the XSB format</li>
+            <li>Fast encode/decode (for a level with dimensions 256x256 the encode takes ~30ms and decode ~5ms)</li>
           </ul>
         </main>
       </>

@@ -1,3 +1,5 @@
+import GridCoordinates from "@/src/Classes/GridCoordinates";
+
 export function getMatrixOfSize<T>(lenX: number, lenY: number, fill: T): T[][] {
   return [...Array(lenX)].map(() => new Array(lenY).fill(fill));
 }
@@ -12,20 +14,32 @@ export function getMatrixWithConditionalFill<T>(lenX: number, lenY: number, fill
   return ret;
 }
 
+export function getGridCoordinatesSatisfyingConditionInMatrix(lenX: number, lenY: number, cond: (x: number, y: number) => boolean): GridCoordinates[] {
+  const ret: GridCoordinates[] = []
+  for (let x = 0; x < lenX; x++) {
+    for (let y = 0; y < lenY; y++) {
+      if (cond(x, y)) {
+        ret.push(new GridCoordinates(x, y));
+      }
+    }
+  }
+  return ret;
+}
+
 export function getTransposedMatrix<T>(matrix: T[][]): T[][] {
   return getMatrixWithConditionalFill(matrix[0].length, matrix.length, (x,y) => matrix[y][x]);
 }
 
 export function matricesAreEqual<T>(matrix1: T[][], matrix2: T[][]): boolean {
-  if (matrix1.length != matrix2.length) {
+  if (matrix1.length !== matrix2.length) {
     return false;
   }
   for (let x = 0; x < matrix1.length; x++) {
-    if (matrix1[x].length != matrix2[x].length) {
+    if (matrix1[x].length !== matrix2[x].length) {
       return false;
     }
     for (let y = 0; y < matrix1[0].length; y++) {
-      if (matrix1[x][y] != matrix2[x][y]) {
+      if (matrix1[x][y] !== matrix2[x][y]) {
         return false;
       }
     }
@@ -34,7 +48,7 @@ export function matricesAreEqual<T>(matrix1: T[][], matrix2: T[][]): boolean {
 }
 
 export function enlargeMatrixOnEachSide<T>(matrix: T[][], fill: T, amount: number = 1): T[][] {
-  if (matrix.length == 0) {
+  if (matrix.length === 0) {
     return getMatrixOfSize(amount*2, amount*2, fill);
   }
   const newLenX = matrix.length + amount*2;

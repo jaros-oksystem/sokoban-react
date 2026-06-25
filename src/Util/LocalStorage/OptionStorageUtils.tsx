@@ -13,7 +13,7 @@ const DEFAULT_RECORD = {
 
 export function getOptionsFromLocalStorage(): OptionInterface {
   const localStorageValue = globalThis.window === undefined ? null : localStorage.getItem(LOCAL_STORAGE_OPTIONS_KEY);
-  if (localStorageValue == null) {
+  if (localStorageValue === null) {
     saveOptionsToLocalStorage(DEFAULT_RECORD);
     return DEFAULT_RECORD;
   }

@@ -36,3 +36,7 @@ export function getRotatedDirection(direction: DirectionEnum): DirectionEnum {
     case DirectionEnum.RIGHT: return DirectionEnum.UP;
   }
 }
+
+export function getAllDirectionEnumValues(): DirectionEnum[] {
+  return [DirectionEnum.UP, DirectionEnum.LEFT, DirectionEnum.DOWN, DirectionEnum.RIGHT];
+}

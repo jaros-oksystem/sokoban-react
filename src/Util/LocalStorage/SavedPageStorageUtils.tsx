@@ -8,7 +8,7 @@ import getLevelFromCsbCode from "@/src/Util/Codes/CsbDecodingUtils";
 
 const LOCAL_STORAGE_SAVED_GAME_PROGRESS_KEY = "savedGameProgress";
 
-class SavedLevel {
+class SavedGameLevel {
   levelUuid: string;
   states: SavedLevelState[];
 
@@ -30,12 +30,12 @@ class SavedLevelState {
   }
 }
 
-function getSavedLevelObjectFromLocalStorage() : SavedLevel | null {
+function getSavedLevelObjectFromLocalStorage() : SavedGameLevel | null {
   if (globalThis.window === undefined) {
     return null;
   }
   const savedLevelValue = localStorage.getItem(LOCAL_STORAGE_SAVED_GAME_PROGRESS_KEY);
-  if (savedLevelValue == null) {
+  if (savedLevelValue === null) {
     return null;
   }
   return JSON.parse(savedLevelValue);
@@ -43,7 +43,7 @@ function getSavedLevelObjectFromLocalStorage() : SavedLevel | null {
 
 export function getSavedLevelUuidFromLocalStorage(): string | null {
   const savedLevel = getSavedLevelObjectFromLocalStorage();
-  if (savedLevel == null) {
+  if (savedLevel === null) {
     return null;
   }
   return savedLevel.levelUuid;
@@ -51,11 +51,11 @@ export function getSavedLevelUuidFromLocalStorage(): string | null {
 
 export function getSavedLevelStatesLocalStorage(): LevelState[] | null {
   const savedLevel = getSavedLevelObjectFromLocalStorage();
-  if (savedLevel == null) {
+  if (savedLevel === null) {
     return null;
   }
   const levelRecord = findLevelRecordByUuid(savedLevel.levelUuid);
-  if (levelRecord == null) {
+  if (levelRecord === null) {
     return null;
   }
   const level = getLevelFromCsbCode(levelRecord.csbCode);
@@ -72,7 +72,7 @@ export function getSavedLevelStatesLocalStorage(): LevelState[] | null {
 export function saveSavedLevelToLocalStorage(levelUuid: string, states: LevelState[]) {
   if (globalThis.window !== undefined) {
     const statesToSave = states.map(state => new SavedLevelState(state.player, state.boxes, state.turn));
-    localStorage.setItem(LOCAL_STORAGE_SAVED_GAME_PROGRESS_KEY, JSON.stringify(new SavedLevel(levelUuid, statesToSave)));
+    localStorage.setItem(LOCAL_STORAGE_SAVED_GAME_PROGRESS_KEY, JSON.stringify(new SavedGameLevel(levelUuid, statesToSave)));
   }
 }
 
@@ -87,5 +87,19 @@ export function getSavedEditorLevelCsbCodeFromLocalStorage(): string | null {
 export function saveSavedEditorLevelCsbCodeToLocalStorage(csbCode: string) {
   if (globalThis.window !== undefined) {
     localStorage.setItem(LOCAL_STORAGE_SAVED_EDITOR_LEVEL_CSB_CODE_KEY, csbCode);
+  }
+}
+
+// ___________________________________ Saved solver level ___________________________________
+
+const LOCAL_STORAGE_SAVED_SOLVER_LEVEL_UUID = "savedSolverLevelUuid";
+
+export function getSavedSolverLevelUuidFromLocalStorage(): string | null {
+  return globalThis.window === undefined ? null : localStorage.getItem(LOCAL_STORAGE_SAVED_SOLVER_LEVEL_UUID);
+}
+
+export function saveSavedSolverLevelUuidToLocalStorage(uuid: string) {
+  if (globalThis.window !== undefined) {
+    localStorage.setItem(LOCAL_STORAGE_SAVED_SOLVER_LEVEL_UUID, uuid);
   }
 }

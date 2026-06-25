@@ -38,7 +38,7 @@ export const DEFAULT_VALUE_LIBRARY_CONTENT: LevelCollection[] = [
 
 export function getLibraryFromLocalStorage(): LevelCollection[] {
   const localStorageValue = globalThis.window === undefined ? null : localStorage.getItem(LOCAL_STORAGE_LIBRARY_KEY);
-  if (localStorageValue == null) {
+  if (localStorageValue === null) {
     saveLibraryToLocalStorage(DEFAULT_VALUE_LIBRARY_CONTENT);
     return DEFAULT_VALUE_LIBRARY_CONTENT;
   }
@@ -99,14 +99,14 @@ export function removeLevelFromLibrary(collectionUuid: string, levelUuid: string
   const library = getLibraryFromLocalStorage();
   const collIndex = getCollectionIdxByUuid(collectionUuid);
   const collectionLevels = library[collIndex].levels;
-  const recordToRemoveIndex = collectionLevels.findIndex(l => l.uuid == levelUuid);
-  if (recordToRemoveIndex == -1) {
+  const recordToRemoveIndex = collectionLevels.findIndex(l => l.uuid === levelUuid);
+  if (recordToRemoveIndex === -1) {
     throw new Error("Level record with uuid " + (levelUuid) + " was not found");
   }
   const recordToRemove = collectionLevels[recordToRemoveIndex];
   for (let i = 0; i < collectionLevels.length; i++) {
     const level = collectionLevels[i];
-    if (i != recordToRemoveIndex && level.order > recordToRemove.order) {
+    if (i !== recordToRemoveIndex && level.order > recordToRemove.order) {
       level.order -= 1;
     }
   }
@@ -124,16 +124,16 @@ export function updateLevelInLibrary(collectionUuid: string, levelUuid: string, 
 
 export function getCollectionIdxByUuid(collectionUuid: string) {
   const library = getLibraryFromLocalStorage();
-  const collIndex = library.findIndex(coll => coll.uuid == collectionUuid);
-  if (collIndex == -1) {
+  const collIndex = library.findIndex(coll => coll.uuid === collectionUuid);
+  if (collIndex === -1) {
     throw new Error("Collection with uuid " + (collectionUuid) + " was not found");
   }
   return collIndex;
 }
 
 export function getFirstNonEmptyCollectionOrNull() : LevelCollection | null {
-  const nonEmptyCollections = getLibraryFromLocalStorage().filter(c => c.levels.length != 0);
-  if (nonEmptyCollections.length == 0) {
+  const nonEmptyCollections = getLibraryFromLocalStorage().filter(c => c.levels.length !== 0);
+  if (nonEmptyCollections.length === 0) {
     return null;
   }
   return nonEmptyCollections[0];
@@ -143,7 +143,7 @@ export function findCollectionByUuid(collUuid: string): LevelCollection {
   return getLibraryFromLocalStorage()[getCollectionIdxByUuid(collUuid)];
 }
 
-export function findLevelRecordByUuidWithCheck(levelUuid: string): LevelRecord {
+export function findLevelRecordByUuidWithCheck(levelUuid: string): LevelRecord | null {
   const level = findLevelRecordByUuid(levelUuid);
   if (level === null) {
     throw new Error("Level not found for uuid " + levelUuid);
@@ -161,9 +161,9 @@ export function findLevelRecordByUuid(levelUuid: string): LevelRecord | null {
   return level;
 }
 
-export function findCollectionWithLevelWithCheck(levelUuid: string): LevelCollection {
+export function findCollectionWithLevelWithCheck(levelUuid: string): LevelCollection | null {
   const collection = getLibraryFromLocalStorage()
-      .find(coll => coll.levels.some(l => l.uuid == levelUuid))
+      .find(coll => coll.levels.some(l => l.uuid === levelUuid))
   if (collection === undefined) {
     throw new Error("Collection with level uuid " + (levelUuid) + " was not found");
   }

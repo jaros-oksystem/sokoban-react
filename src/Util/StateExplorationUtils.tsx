@@ -1,6 +1,6 @@
 import {getMatrixOfSize} from "@/src/Util/MatrixUtils";
 import GridCoordinates from "@/src/Classes/GridCoordinates";
-import {DirectionEnum} from "@/src/Enum/DirectionEnum";
+import {getAllDirectionEnumValues} from "@/src/Enum/DirectionEnum";
 
 export function getAllReachableTiles(lenX: number, lenY: number, start: GridCoordinates,
                                      isBlocking: (coords: GridCoordinates) => boolean): boolean[][] {
@@ -8,11 +8,8 @@ export function getAllReachableTiles(lenX: number, lenY: number, start: GridCoor
   const stack: GridCoordinates[] = [start];
   visited[start.x][start.y] = true;
   while (stack.length > 0) {
-    const state = stack.pop();
-    if (state === undefined) {
-      throw new Error("Nothing to pop");
-    }
-    for (const direction of [DirectionEnum.UP, DirectionEnum.LEFT, DirectionEnum.DOWN, DirectionEnum.RIGHT]) {
+    const state = stack.pop()!;
+    for (const direction of getAllDirectionEnumValues()) {
       const nextState = state.getShifted(direction);
       if (!isBlocking(nextState) && !visited[nextState.x][nextState.y]) {
         visited[nextState.x][nextState.y] = true;
@@ -32,14 +29,11 @@ export function getMovesRequiredToReachTile(lenX: number, lenY: number, start: G
   let move = 0;
   while (stack.length > 0) {
     while (stack.length > 0) {
-      const state = stack.pop();
-      if (state === undefined) {
-        throw new Error("Nothing to pop");
-      }
+      const state = stack.pop()!;
       if (goal.equals(state)) {
         return move;
       }
-      for (const direction of [DirectionEnum.UP, DirectionEnum.LEFT, DirectionEnum.DOWN, DirectionEnum.RIGHT]) {
+      for (const direction of getAllDirectionEnumValues()) {
         const nextState = state.getShifted(direction);
         if (!isBlocking(nextState) && !visited[nextState.x][nextState.y]) {
           visited[nextState.x][nextState.y] = true;

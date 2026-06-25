@@ -75,7 +75,7 @@ export default function LevelRecordDialogueButton({onSave, defaultValues}: Reado
                     <input type="radio"
                            name="codeTypeRadio"
                            value={codeEnum}
-                           checked={selectedCodeType == codeEnum}
+                           checked={selectedCodeType === codeEnum}
                            onChange={() => setSelectedCodeType(codeEnum)}
                     /> {codeEnumToString(codeEnum)}
                   </label>
@@ -96,9 +96,11 @@ export default function LevelRecordDialogueButton({onSave, defaultValues}: Reado
                         className="px-1 my-2 outline resize-none read-only:bg-gray-200 whitespace-nowrap"/>
             </>
           }
-          <ColoredButton content={newRecord ? "Create" : "Save"}
-                         color={colorEnum}
-                         onClick={handleOnSave} />
+          <div className="mx-auto">
+            <ColoredButton content={newRecord ? "Create" : "Save"}
+                           color={colorEnum}
+                           onClick={handleOnSave} />
+          </div>
         </div>
       }/>
   );

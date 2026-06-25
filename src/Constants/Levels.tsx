@@ -209,12 +209,12 @@ export const MICROBAN_CSB_CODES = [
   "u-h-5i-vM*A.5f8G0kuUxR7WW0l7WG1hmH*B0BaFaknSLIBggaAARLL91jiiyLJ5gqqASBLB90aiuTLBCi8c0jYAYL.f-0c)5g4)380060o)po-0c)5g)480060o)ag)eo"
 ];
 
-export const DEFAULT_CSB_FOR_GAME = ORIGINAL_LEVELS_CSB_CODES[0];
-export const DEFAULT_CSB_CODE_FOR_EDITOR = MICROBAN_CSB_CODES[0];
+export const FALLBACK_CSB_CODE_FOR_GAME = ORIGINAL_LEVELS_CSB_CODES[0];
+export const FALLBACK_CSB_CODE_FOR_EDITOR = MICROBAN_CSB_CODES[0];
 export const ERROR_CSB_CODE = "1-1-0-._._";
 
 export const DEFAULT_XSB_CODE =
-    `    #####
+`    #####
     #   #
     #$  #
   ###  $##

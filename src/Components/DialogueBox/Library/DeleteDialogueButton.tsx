@@ -27,7 +27,7 @@ export default function DeleteDialogueButton({title, onDelete}: Readonly<Props>)
       } content={
         <div className="flex justify-center">
           <ColoredButton content={"\u2713 Yes"} color={ColorEnum.GREEN} onClick={handleOnDelete} />
-          <div className="mx-5"></div>
+          <div className="mx-2"></div>
           <ColoredButton content={"\u2573 No"} color={ColorEnum.RED} onClick={() => setIsOpen(false)} />
         </div>
       }/>

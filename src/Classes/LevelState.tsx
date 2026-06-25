@@ -22,7 +22,7 @@ export default class LevelState {
 
   getBoxIdxAt(coordinates: GridCoordinates): number|null {
     const idx = this.boxes.findIndex((e) => e.equals(coordinates));
-    return idx == -1 ? null : idx;
+    return idx === -1 ? null : idx;
   }
 
   isWon() {
@@ -45,7 +45,7 @@ export default class LevelState {
     // Check if player tries to move a box
     const movedBoxIdx = this.getBoxIdxAt(newPlayerCoords);
     const newBoxCoords = newPlayerCoords.getShifted(direction);
-    if (movedBoxIdx != null) {
+    if (movedBoxIdx !== null) {
       if (this.canBoxBePushedTo(newBoxCoords)) {
         // There is nothing preventing the box from being moved
         return this.getNewState(newPlayerCoords, 1, movedBoxIdx, newBoxCoords);
@@ -67,9 +67,9 @@ export default class LevelState {
     }
     // If the destination is a box, check if it is next to the player and can be moved
     const movedBoxIdx = this.getBoxIdxAt(clickCoords);
-    if (movedBoxIdx != null) {
+    if (movedBoxIdx !== null) {
       const pushDirection = this.player.getDirectionOfAdjacentObject(clickCoords);
-      if (pushDirection == null) {
+      if (pushDirection === null) {
         // The player isn't next to a box, yet tries to move into one
         return null;
       } else {
@@ -86,9 +86,9 @@ export default class LevelState {
     }
     const movesRequired = getMovesRequiredToReachTile(this.parentLevel.lenX, this.parentLevel.lenY,
         this.player, clickCoords, (c) => {
-      return !this.parentLevel.isValidPlaceForObjectAt(c) || this.getBoxIdxAt(c) != null;
+      return !this.parentLevel.isValidPlaceForObjectAt(c) || this.getBoxIdxAt(c) !== null;
     });
-    return movesRequired == null ? null : this.getNewState(clickCoords, movesRequired);
+    return movesRequired === null ? null : this.getNewState(clickCoords, movesRequired);
   }
 
   getNewState(newPlayerCoords: GridCoordinates, addedMoves: number, movedBoxIdx?: number, movedBoxCoords?: GridCoordinates): LevelState {
@@ -101,7 +101,7 @@ export default class LevelState {
   }
 
   canBoxBePushedTo(coords: GridCoordinates): boolean {
-    return this.parentLevel.isValidPlaceForObjectAt(coords) && this.getBoxIdxAt(coords) == null;
+    return this.parentLevel.isValidPlaceForObjectAt(coords) && this.getBoxIdxAt(coords) === null;
   }
 
 }

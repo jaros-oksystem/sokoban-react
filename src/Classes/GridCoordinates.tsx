@@ -22,6 +22,10 @@ export default class GridCoordinates {
     }
   }
 
+  shiftByXY(x:number, y:number): GridCoordinates {
+    return new GridCoordinates(this.x + x, this.y + y);
+  }
+
   getDirectionOfAdjacentObject(object: GridCoordinates): DirectionEnum | null {
     for (const direction of [DirectionEnum.UP, DirectionEnum.DOWN, DirectionEnum.LEFT, DirectionEnum.RIGHT]) {
       if (object.equals(this.getShifted(direction))) {
@@ -29,6 +33,10 @@ export default class GridCoordinates {
       }
     }
     return null;
+  }
+
+  toTileIdx(lenY: number): number {
+    return lenY*this.x + this.y;
   }
 
 }

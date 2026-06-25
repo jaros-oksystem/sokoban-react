@@ -17,7 +17,7 @@ interface Props {
 }
 
 export const PreviewBoardMemo = memo(PreviewBoard,
-    (oldProps, newProps) => oldProps.csbCode == newProps.csbCode);
+    (oldProps, newProps) => oldProps.csbCode === newProps.csbCode);
 
 export function PreviewBoard({csbCode, widthPx = 200, heightPx = 200} : Readonly<Props>) {
   let level;
@@ -37,7 +37,7 @@ export function PreviewBoard({csbCode, widthPx = 200, heightPx = 200} : Readonly
   const tileClassName = "block " + (gridOption ? "border-[1px] border-black " : "");
 
   return (
-      <div className={"flex border-1"}>
+      <div className={"flex border"}>
         {
           Array.from({length: level.lenX}, (_: number, x: number) =>
               <div key={"Tile row:" + x} className="whitespace-nowrap">

@@ -3,3 +3,4 @@ export const GAME_PAGE_PATH = "/game";
 export const EDITOR_PAGE_PATH = "/editor";
 export const OPTIONS_PAGE_PATH = "/options";
 export const LIBRARY_PAGE_PATH = "/library";
+export const SOLVER_PAGE_PATH = "/solver";

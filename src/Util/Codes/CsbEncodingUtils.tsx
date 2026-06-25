@@ -7,7 +7,7 @@ import {
   trimMatrixOnEachSide
 } from "@/src/Util/MatrixUtils";
 import {
-  BASE64_BITS,
+  BASE64_NUMBER_OF_BITS,
   binaryStringToBase64String,
   decimalToBase64
 } from "@/src/Util/Codes/BaseConversionUtils";
@@ -16,7 +16,7 @@ import {
   bitmapToBinaryString,
   canMaskBeUsedOnBitmap,
   compressBase64String,
-  coordinatesToTileId, getInvertedBitmap,
+  getInvertedBitmap,
   SEPARATOR,
   trimmedPlayableMaskToWallBitmap
 } from "@/src/Util/Codes/GeneralCsbUtils";
@@ -41,7 +41,7 @@ function createCode(level: Level): string {
 
 function getCodePartForPlayer(level: Level) {
   return SEPARATOR + (level.isInitialPlayerAtNoPlayerCoordinates() ? "" :
-      decimalToBase64(coordinatesToTileId(level.initialPlayer, level.lenY)));
+      decimalToBase64(level.initialPlayer.toTileIdx(level.lenY)));
 }
 
 function getCodePartForWalls(level: Level): string {
@@ -68,7 +68,7 @@ function getCodePartForGoals(level: Level): string {
 function getCodePartForBoxes(level: Level): string {
   const boxBitmap = getBitmapByTileType(level, LevelTileEnum.BOX);
   if (!level.isInitialPlayerAtNoPlayerCoordinates()) {
-    const viableBoxMask = level.getViableBoxMask();
+    const viableBoxMask = level.getSimpleViableBoxMask();
     if (canMaskBeUsedOnBitmap(boxBitmap, viableBoxMask)) {
       return ALT_SEPARATOR + bitmapToCompressedString(boxBitmap, viableBoxMask);
     }
@@ -85,7 +85,7 @@ function getBitmapByTileType(level: Level, tileType: LevelTileEnum): boolean[][]
     case LevelTileEnum.WALL:
     case LevelTileEnum.GOAL:
       return getMatrixWithConditionalFill(level.lenX, level.lenY, (x, y) =>
-          level.levelTiles[x][y] == tileType
+          level.levelTiles[x][y] === tileType
       );
     case LevelTileEnum.BOX: {
       const ret = getMatrixOfSize(level.lenX, level.lenY, false);
@@ -101,17 +101,11 @@ function getBitmapByTileType(level: Level, tileType: LevelTileEnum): boolean[][]
 
 function bitmapToCompressedString(bitmap: boolean[][], mask: boolean[][] = []): string {
   const binaryString = bitmapToBinaryString(bitmap, mask);
-  const stringToEncode = bitFillBinaryString(binaryString, BASE64_BITS);
+  const stringToEncode = bitFillBinaryString(binaryString, BASE64_NUMBER_OF_BITS);
   return compressBase64String(binaryStringToBase64String(stringToEncode));
 }
 
 function bitFillBinaryString(binaryString: string, bits: number) {
-  if (binaryString.length == 0) {
-    return binaryString;
-  }
-  const lastBit = binaryString.at(-1);
-  if (lastBit === undefined) {
-    throw new Error("Could not bit fill a binary string");
-  }
-  return binaryString + lastBit.repeat((bits - binaryString.length % bits) % bits);
+  const overhead = binaryString.length % bits;
+  return binaryString + (overhead === 0 ? "" : binaryString.at(-1)!.repeat(bits - overhead));
 }

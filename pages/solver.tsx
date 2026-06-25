@@ -1,12 +1,12 @@
 'use client'
 
-import GamePlayable from "@/src/Components/GamePlayable";
 import "./globals.css";
 import SiteNav, {PagesEnum} from "@/src/Components/SiteNav";
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/router";
+import LevelSolver from "@/src/Components/LevelSolver";
 
-export default function Game() {
+export default function Solver() {
   const [levelCsbCode, setLevelCsbCode] = useState<string | undefined>(undefined);
   const [levelUuid, setLevelUuid] = useState<string | undefined>(undefined);
   const [routerReady, setRouterReady] = useState<boolean>(false);
@@ -39,10 +39,10 @@ export default function Game() {
 
   return (
       <div>
-        <SiteNav activatePage={PagesEnum.GAME}/>
+        <SiteNav activatePage={PagesEnum.SOLVER}/>
         <div className="mt-2">
           {
-            routerReady && <GamePlayable urlLevelCsbCode={levelCsbCode} urlLibraryLevelUuid={levelUuid}/>
+              routerReady && <LevelSolver urlLevelCsbCode={levelCsbCode} urlLibraryLevelUuid={levelUuid}/>
           }
         </div>
       </div>
